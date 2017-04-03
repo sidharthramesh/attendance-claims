@@ -7,11 +7,16 @@ def index():
 @app.route('/submit',methods = ['POST'])
 def form_handle():
     print('Got form!')
-    name = request.form['name']
-    date = request.form['date']
-    print('The name is {}\nDate is {}'.format(name,date))
-    print(type(date))
-    return render_template('thankyou.html',name = name)
+    return render_template('classes.html',form = request.form, classes = class_details(request.form))
+@app.route('/submit_classes', methods = ['POST'])
+def submit_classes():
+    return render_template('thankyou.html')
+def class_details(form):
+    date = form['date']
+    #mockup
+    classes = [{'value':'pathology_p','name':'Pathology Practicals'},{'value':'microbio_t','name':'Microbiology Theory'}]
+    return classes
+
 
 if __name__ == '__main__':
     app.run()
