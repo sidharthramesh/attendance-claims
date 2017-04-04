@@ -1,4 +1,22 @@
 # Manipal Attendance Claims
+
+### Usage
+Have a working [python](https://www.python.org/) installation.<br>
+
+Copy and go into the repository:
+```console
+git clone https://github.com/tornadoalert/attendance-claims.git
+cd attendance-claims
+```
+Install the requirements:
+```console
+pip install -r requirements.txt
+```
+To run the server on localhost (http://localhost:5000/ by default):
+```console
+python app.py
+```
+
 ### API Documentation
 ## /classdata
 **Method** : GET <br>
