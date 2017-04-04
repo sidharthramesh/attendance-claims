@@ -14,9 +14,9 @@ pip install -r requirements.txt
 ```
 To run the server on localhost (http://localhost:5000/ by default):
 ```console
-python app.py
+python run.py
 ```
-
+Online server available at http://attendance-claims.appspot.com
 ### API Documentation
 ## /classdata
 **Method** : GET <br>
