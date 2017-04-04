@@ -3,8 +3,8 @@ import dateutil.parser
 from timetable import get_schedule
 app = Flask(__name__)
 @app.route('/',methods = ['GET'])
-def index(variable):
-    return "Work in progress..."
+def index():
+    return render_template('landing.html')
 @app.route('/classdata',methods = ['GET'])
 def class_data():
     """Request class data with params date=(2017-12-31) and batch=batch_a"""
