@@ -13,3 +13,8 @@ def class_data():
     batch = request.args.get('batch')
     print(batch)
     return jsonify(get_schedule(date,batch))
+
+@app.errorhandler(404)
+def page_not_found(e):
+    """Return a custom 404 error."""
+    return render_template('landing.html',notfound = True), 404
