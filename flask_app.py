@@ -11,9 +11,9 @@ def get_schedule(date, batch):
 def get_day(date):
     d = dateutil.parser.parse(date)
     return int(d.weekday())
-@app.route('/',methods = ['GET'])
+@app.route('/',methods = ['GET','POST'])
 def index():
-    return "Index page"
+    return render_template('index.html',heading = 'Hello there!')
 @app.route('/classdata',methods = ['GET'])
 def class_data():
     """Request class data with params date=(2017-12-31) and batch=batch_a"""
