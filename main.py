@@ -9,9 +9,9 @@ def index():
 def class_data():
     """Request class data with params date=(2017-12-31) and batch=batch_a"""
     date = request.args.get('date')
-    print(date)
+    #print(date)
     batch = request.args.get('batch')
-    print(batch)
+    #print(batch)
     return jsonify(get_schedule(date,batch))
 
 @app.errorhandler(404)
