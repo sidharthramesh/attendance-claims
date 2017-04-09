@@ -16,7 +16,7 @@ To run the server on localhost (http://localhost:5000/ by default):
 ```console
 python run.py
 ```
-Online server available at http://attendance-claims.appspot.com
+Online server available at http://tornadoalert.pythonanywhere.com
 ### API Documentation
 ## /classdata
 **Method** : GET <br>
