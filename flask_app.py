@@ -1,5 +1,4 @@
-from flask import request,redirect, Flask, render_template,jsonify
-import json
+from flask import request, Flask, render_template,jsonify
 import dateutil.parser
 app = Flask(__name__)
 def get_schedule(date, batch = 'batch_a'):
