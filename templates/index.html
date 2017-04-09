@@ -1,7 +1,11 @@
-<h1>{heading}</h1>
+<h1>{{heading}}</h1>
 <div>
            <form action="/" method="POST">
-               <input type = "date">
+               <input type = "date" name='date'> <br>
+               <select name="batch">
+                <option value="batch_a">Batch a</option>
+                <option value="batch_b">Batch b</option>
+              </select>
                <input type="submit" value="Get classes">
            </form>
        </div>
