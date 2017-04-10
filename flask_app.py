@@ -49,6 +49,7 @@ class Day(db.Model):
 
 class Claim(db.Model):
     id = db.Column(db.Integer,primary_key = True)
+    event_id = db.Column(db.Integer,db.ForeignKey('event.id'))
     user_id = db.Column(db.Integer,db.ForeignKey('user.id'))
     date = db.Column(db.Date)
     period_id = db.Column(db.Integer, db.ForeignKey('period.id'))
@@ -56,7 +57,10 @@ class Claim(db.Model):
     approval_js = db.Column(db.Integer, default = 0)
     approval_office = db.Column(db.Integer, default = 0)
     approval_dept = db.Column(db.Integer, default = 0)
-
+class Event(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    name = db.Column(db.String)
+    claims = db.relationship('Claim',backref = 'event',lazy='dynamic')
     def __repr__(self):
         approval_status = self.approval_js + self.approval_office +self.approval_dept
         return "<{date} for {user}. Approval status: {approval}>".format(date = self.date, user = self.user, approval=approval_status)
