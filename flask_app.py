@@ -1,9 +1,10 @@
 from flask import request, Flask, render_template,jsonify
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 import dateutil.parser
 app = Flask(__name__)
 app.config["DEBUG"] = True
-SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
+SQLALCHEMY_DATABASE_URI = "sqlite:///app.db"
+SQLALCHEMY_DATABASE_URI_ = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
     username="tornadoalert",
     password="Supernova-7",
     hostname="tornadoalert.mysql.pythonanywhere-services.com",
@@ -13,6 +14,58 @@ app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
 
 db = SQLAlchemy(app)
+class Department(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    name = db.Column(db.String)
+    classes = db.relationship('Period',backref='department',lazy='dynamic')
+    username = db.Column(db.String)
+    password = db.Column(db.String)
+    claims = db.relationship('Claim',backref = 'department',lazy='dynamic')
+    def __repr__(self):
+        return "<department {}>".format(self.name)
+
+class Period(db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    batch_id = db.Column(db.Integer, db.ForeignKey('batch.id'))
+    name = db.Column(db.String)
+    start_time = db.Column(db.Time)
+    end_time = db.Column(db.Time)
+    department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
+    day_id = db.Column(db.Integer,db.ForeignKey('day.id'))
+    claims = db.relationship('Claim',backref='period',lazy='dynamic')
+    def __repr__(self):
+        return "<{name}  {start} to {end}>".format(name=self.name,start=self.start_time,end=self.end_time)
+
+class Batch(db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    name = db.Column(db.String)
+    classes = db.relationship('Period',backref='batch',lazy='dynamic')
+    def __repr__(self):
+        return "<batch {}>".format(self.name)
+
+class Day(db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    name = db.Column(db.String)
+    classes = db.relationship('Period',backref='day',lazy='dynamic')
+    def __repr__(self):
+        return "<day {}>".format(self.name)
+
+class Claim(db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    user_id = db.Column(db.Integer,db.ForeignKey('user.id'))
+    date = db.Column(db.Date)
+    period_id = db.Column(db.Integer, db.ForeignKey('period.id'))
+    department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
+    approval1 = db.Column(db.Integer, default = 0)
+    approval2 = db.Column(db.Integer, default = 0)
+    approval3 = db.Column(db.Integer, default = 0)
+class User(db.Model):
+    id = db.Column(db.Integer,primary_key = True)
+    roll_no = db.Column(db.Integer)
+    name = db.Column(db.String)
+    email = db.Column(db.String)
+    serial = db.Column(db.Integer)
+    claims = db.relationship('Claim',backref='user',lazy='dynamic')
 
 def get_schedule(date, batch = 'batch_a'):
     classes = {'batch_a':{0: {'8 AM to 9 AM': 'Microbiology', '9:30 AM to 12 Noon': 'Postings', '2 PM to 3 PM': 'Pathology', '3 PM to 4 PM': 'Microbiology practicals', '4 PM to 5 PM': 'nan'}, 1: {'8 AM to 9 AM': 'Medicine', '9:30 AM to 12 Noon': 'Postings', '2 PM to 3 PM': 'Pharmacology', '3 PM to 4 PM': 'Forensic Medicine CBL', '4 PM to 5 PM': 'Forensic Medicine Practicals'}, 2: {'8 AM to 9 AM': 'Community Medicine', '9:30 AM to 12 Noon': 'Postings', '2 PM to 3 PM': 'Pathology', '3 PM to 4 PM': 'Pathology practicals', '4 PM to 5 PM': 'nan'}, 3: {'8 AM to 9 AM': 'Pharmacology', '9:30 AM to 12 Noon': 'Postings', '2 PM to 3 PM': 'Microbiology', '3 PM to 4 PM': 'Pharmacology practicals', '4 PM to 5 PM': 'nan'}, 4: {'8 AM to 9 AM': 'Surgery', '9:30 AM to 12 Noon': 'Postings', '2 PM to 3 PM': 'Pathology', '3 PM to 4 PM': 'Community Medicine practicals', '4 PM to 5 PM': 'nan'}, 5: {'8 AM to 9 AM': 'Forensic Medicine/Microbiology', '9:30 AM to 12 Noon': 'Postings', '2 PM to 3 PM': 'Pharmacology', '3 PM to 4 PM': 'Bio Ethics*', '4 PM to 5 PM': 'nan'}},'batch_b':{0: {'8 AM to 9 AM': 'Microbiology', '9:30 AM to 12 Noon': 'Postings', '2 PM to 3 PM': 'Pathology', '3 PM to 4 PM': 'Pathology practicals', '4 PM to 5 PM': 'nan'}, 1: {'8 AM to 9 AM': 'Medicine', '9:30 AM to 12 Noon': 'Postings', '2 PM to 3 PM': 'Pharmacology', '3 PM to 4 PM': 'Microbiology practicals', '4 PM to 5 PM': 'nan'}, 2: {'8 AM to 9 AM': 'Community Medicine', '9:30 AM to 12 Noon': 'Postings', '2 PM to 3 PM': 'Pathology', '3 PM to 4 PM': 'Pharmacology practicals', '4 PM to 5 PM': 'nan'}, 3: {'8 AM to 9 AM': 'Pharmacology', '9:30 AM to 12 Noon': 'Postings', '2 PM to 3 PM': 'Microbiology', '3 PM to 4 PM': 'Forensic Medicine CBL', '4 PM to 5 PM': 'Forensic Medicine Practicals'}, 4: {'8 AM to 9 AM': 'Surgery', '9:30 AM to 12 Noon': 'Postings', '2 PM to 3 PM': 'Pathology', '3 PM to 4 PM': 'Community Medicine practicals', '4 PM to 5 PM': 'nan'}, 5: {'8 AM to 9 AM': 'Forensic Medicine/Microbiology', '9:30 AM to 12 Noon': 'Postings', '2 PM to 3 PM': 'Pharmacology', '3 PM to 4 PM': 'Bio Ethics*', '4 PM to 5 PM': 'nan'}}}
