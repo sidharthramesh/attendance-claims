@@ -12,16 +12,23 @@
     <h1>{{heading}}</h1>
     <div>
                <form action="/" method="POST">
-                 Roll no: <input type = "text" name='rollno'> <br>
-                 Serial no: <input type = "text" name='serial'> <br>
-                 Name: <input type = "text" name='name'> <br>
-                 Event name: <input type = "text" name='event'><br>
+                 Roll no: <input type = "text" name='rollno' value="{{form.rollno}}"> <br>
+                 Serial no: <input type = "text" name='serial' value="{{form.serial}}"> <br>
+                 Name: <input type = "text" name='name' value="{{form.name}}"> <br>
+                 Event name: <input type = "text" name='event' value= "{{form.event}}"><br>
+                 {%if not form%}
                    Date:<input type = "date" name='date'> <br>
                    <select name="batch">
-                    <option value="batch_a">Batch a</option>
-                    <option value="batch_b">Batch b</option>
+                    <option value="batch_a">4th sem Batch a</option>
+                    <option value="batch_b">4th sem Batch b</option>
                   </select>
                    <input type="submit" value="Get classes">
+                   {%else%}
+                   {%for time,class in classes%}
+                   {{time}}----------{{class}}
+                   {%endfor%}
+                   {%endif%}
+
                </form>
            </div>
   </body>

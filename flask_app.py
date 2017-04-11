@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import dateutil.parser
 from config import SQLALCHEMY_DATABASE_URI
 from flask_migrate import Migrate
-app = Flask(__name__)
+app = Flask(__name__,static_url_path='/static')
 app.config["DEBUG"] = True
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
@@ -49,18 +49,17 @@ class Day(db.Model):
 
 class Claim(db.Model):
     id = db.Column(db.Integer,primary_key = True)
-    event_id = db.Column(db.Integer,db.ForeignKey('event.id'))
+    event = db.Column(db.String)
     user_id = db.Column(db.Integer,db.ForeignKey('user.id'))
     date = db.Column(db.Date)
+    start_time = db.Column(db.Time)
+    end_time = db.Column(db.Time)
     period_id = db.Column(db.Integer, db.ForeignKey('period.id'))
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     approval_js = db.Column(db.Integer, default = 0)
     approval_office = db.Column(db.Integer, default = 0)
     approval_dept = db.Column(db.Integer, default = 0)
-class Event(db.Model):
-    id = db.Column(db.Integer,primary_key=True)
-    name = db.Column(db.String)
-    claims = db.relationship('Claim',backref = 'event',lazy='dynamic')
+
     def __repr__(self):
         approval_status = self.approval_js + self.approval_office +self.approval_dept
         return "<{date} for {user}. Approval status: {approval}>".format(date = self.date, user = self.user, approval=approval_status)
@@ -85,11 +84,10 @@ def get_day(date):
 @app.route('/',methods = ['GET','POST'])
 def index():
     if request.method == 'POST':
-        date = request.form['date']
-        batch = request.form['batch']
-        return jsonify(get_schedule(date,batch))
-    return render_template('index.html',heading = 'Hello there!')
-
+        date = request.form.get('date')
+        return render_template('index.html',heading = 'Hello there!',form=request.form,classes = get_schedule(date).items() )
+    else:
+        return render_template('index.html',heading = 'Hello there!',form=None)
 @app.route('/classdata',methods = ['GET'])
 def class_data():
     """Request class data with params date=(2017-12-31) and batch=batch_a"""

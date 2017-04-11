@@ -1,5 +1,6 @@
 from flask_app import *
-micro = Department(name = 'Microbiology',username = 'microman', password = 'testing123')
+for department in ['Microbiology',]:
+    Department(name = 'Microbiology',username = 'admin', password = 'admin123')
 batcha = Batch(name = '4th Sem Batch a')
 db.session.add(micro)
 db.session.add(batcha)
