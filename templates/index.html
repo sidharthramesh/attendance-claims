@@ -19,13 +19,15 @@
                  {%if not form%}
                    Date:<input type = "date" name='date'> <br>
                    <select name="batch">
-                    <option value="batch_a">4th sem Batch a</option>
-                    <option value="batch_b">4th sem Batch b</option>
+                     {%for batch in batches%}
+                     batch
+                    <option value="{{batch.id}}">{{batch.name}}</option>
+                    {%endfor%}
                   </select>
                    <input type="submit" value="Get classes">
                    {%else%}
                    {%for time,class in classes%}
-                   <div >
+                   <div>
                      {{time}} {{class}}
                    </div>
                    {%endfor%}

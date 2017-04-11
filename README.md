@@ -14,7 +14,7 @@ pip install -r requirements.txt
 ```
 To run the server on localhost (http://localhost:5000/ by default):
 ```console
-python run.py
+python local_run.py
 ```
 Online server available at http://tornadoalert.pythonanywhere.com
 ### API Documentation
