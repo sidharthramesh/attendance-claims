@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Raleway');
+
 body
 {
   width:100%;
@@ -17,6 +19,7 @@ body
   position:absolute;
   top:0px;
   left:0px;
+  font-family: 'Open Sans', sans-serif;
   overflow-x:hidden;
   overflow-y:visible;
 }
@@ -27,7 +30,7 @@ body
 #viewport > div .tooltip
 {
   margin-bottom:8px;
-  font-family:sans-serif;
+  font-family: 'Raleway', sans-serif;
   font-style:italic;
   font-size:16px;
   color:rgba(0,0,0,0.48);
@@ -66,7 +69,7 @@ body
   display: table;
   width: 100%;
   table-layout: fixed;
-  font-family:sans-serif;
+  font-family: 'Raleway', sans-serif;
 }
 #year_years > div,
 #batch_batches > div
@@ -116,4 +119,30 @@ body
 {
   background:rgb(245,245,245);
   color:black;
+}
+#classes_datedList
+{
+  padding:8px;
+}
+#classes_datedList > div
+{
+  width:calc(100% - 16px);
+  padding:8px;
+  background:white;
+  display:table;
+}
+#classes_datedList > div > div
+{
+  display:table-cell;
+  padding:8px;
+}
+#classes_datedList > div > div:nth-child(1)
+{
+
+}
+#classes_datedList > div > div:nth-child(2)
+{
+  width:32px;
+  padding-top:auto;
+  border-left:1px solid lightGray;
 }

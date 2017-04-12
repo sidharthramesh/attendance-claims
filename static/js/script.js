@@ -149,7 +149,6 @@ function selectDate (obj) {
   updateClasses(obj.querySelector("input[type=hidden]").value, document.getElementById('year_years_selection').value, document.getElementById('batch_batches_selection').value);
 };
 function updateClasses (date, year, batch) {
-  console.log("/classdata?date=" + date + "&batch=" + year + "+Year+Batch+" + batch);
   var xmlhttp;
   if (window.XMLHttpRequest) {
     xhttp = new XMLHttpRequest();
@@ -160,15 +159,17 @@ function updateClasses (date, year, batch) {
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       // TODO
+      console.log(this.responseText);
     }
   };
   xhttp.open("GET", "/classdata?date=" + date + "&batch=" + year + "+Year+Batch+" + batch, true);
-  //xhttp.send();
+  xhttp.send();
 }
 function harvest () {
   var details = {};
   details.name = "" + document.getElementById('name_text').value;
   details.rollNumber = "" + document.getElementById('number_number').value;
+  details.serialNumber = "" + document.getElementById('serialNumber_number').value;
   details.year = "" + document.getElementById('year_years_selection').value;
   details.batch = "" + document.getElementById('batch_batches_selection').value;
   details.selectedClasses = [];

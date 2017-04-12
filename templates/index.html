@@ -3,7 +3,7 @@
   <head>
     <title>Manipal Attendence Claims</title>
     <meta name="viewport" content="width=device-width, user-scalable=no"/>
-    <link rel="stylesheet" href="static/css/styles.css"/>
+    <link rel="stylesheet" href="/static/css/styles.css"/>
   </head>
   <body>
     <div id="viewport">
@@ -18,6 +18,10 @@
       <div id="number">
         <div class="tooltip">What's your roll number?</div>
         <input id="number_number" type="number"/>
+      </div>
+      <div id="serialNumber">
+        <div class="tooltip">What's your Serial number?</div>
+        <input id="serialNumber_number" type="number"/>
       </div>
       <div id="year">
         <div class="tooltip">Which year are you studying in?</div>
@@ -63,8 +67,17 @@
             <tbody id="classes_calendar_dates"></tbody>
           </table>
         </div>
-        <div>CLASSES</div>
-        <div>SELECTION</div>
+        <div id="classes_datedList">
+          <div>
+            <div>
+              <h2>Class Name</h2>
+              <p>Start Time - End Time</p>
+              <div>Dept.</div>
+            </div>
+            <div>--></div>
+          </div>
+        </div>
+        <div id="classes_selection">SELECTION</div>
       </div>
       <div id="events">
         <div class="tooltip">Which event did you miss these classes for?</div>
@@ -80,6 +93,6 @@
       </div>
     </div>
 
-    <script src="static/js/script.js"></script>
+    <script src="/static/js/script.js"></script>
   </body>
 </html>
