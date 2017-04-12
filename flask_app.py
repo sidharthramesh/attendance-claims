@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import dateutil.parser
 from config import SQLALCHEMY_DATABASE_URI
 from flask_migrate import Migrate
-app = Flask(__name__,static_url_path='/assets')
+app = Flask(__name__,static_url_path='/static')
 app.config["DEBUG"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
@@ -39,17 +39,12 @@ Orthopaedics""".splitlines()
 def get_schedule(date,batch):
     day = dateutil.parser.parse(date).weekday()+1
     return Period.query.filter_by(day=day, batch = Batch.query.filter_by(name=batch).first()).order_by(Period.start_time).all()
-
+def process_claim(data):
+    pass
 @app.route('/',methods = ['GET','POST'])
 def index():
-    batches = [{'name':batch.name,'id':batch.id} for batch in Batch.query.order_by(Batch.name)]
-    if request.method == 'POST':
-        date = request.form.get('date')
-        print(batches)
-        return render_template('index.html',heading = 'Hello there!', form=request.form, classes = get_schedule(date), batches = batches)
-    else:
-        return render_template('index.html',heading = 'Hello there!',form=None,batches = batches)
-@app.route('/classdata',methods = ['GET'])
+    return render_template('index.html')
+@app.route('/classdata',methods = ['GET','POST'])
 def class_data():
     """Request class data with params date=(2017-12-31) and batch=batch_a"""
     if request.method == 'GET':
@@ -58,14 +53,30 @@ def class_data():
         if date and batch:
             classes = []
             for period in get_schedule(date,batch):
-                class_obj = {'id':period.id, 'name' : period.name, 'start_time':str(period.start_time), 'end_time':str(period.end_time),'department':all_depts}
+                class_obj = {'id':period.id, 'name' : period.name, 'start_time':str(period.start_time), 'end_time':str(period.end_time),'department':all_depts,'date':date}
                 if period.name == 'Postings':
                     class_obj['department'] = posting_depts
                 if not period.department == None:
                     class_obj['department'] = period.department.name
                 classes.append(class_obj)
             return jsonify(classes)
+    if request.method == 'POST':
+        data = request.json
+        user = User.query.filter_by(roll_no=int(data['rollNumber'])).first()
+        new_user = False
+        if user == None:
 
+            new_user = True
+            user = User(roll_no = int(data['rollNumber'], name = data['name'],email = data['email'], serial = data['serialNumber']))
+            app.logger.info("User is {}".user.name)
+            #db.add(u)
+            #db.commit()
+        for period in data['selectedClasses']:
+            department = Department.query.filter_by(name = period['department']).first()
+            claim_obj = Claim(event = data['event'], user = user, date = period['date'], start_time=period['startTime'], end_time = period['endTime'],department = department )
+            app.logger.info(str(claim_obj))
+            #db.add(claim_obj)
+            #db.commit()
 @app.errorhandler(404)
 def page_not_found(e):
     """Return a custom 404 error."""
