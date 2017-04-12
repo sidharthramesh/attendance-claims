@@ -77,6 +77,12 @@ def class_data():
             app.logger.info(str(claim_obj))
             #db.add(claim_obj)
             #db.commit()
+@app.route('/status_check',methods = ['GET','POST'])
+def status_check():
+    pass
+@app.route('/login',methods = ['GET','POST'])
+def login():
+    pass
 @app.errorhandler(404)
 def page_not_found(e):
     """Return a custom 404 error."""

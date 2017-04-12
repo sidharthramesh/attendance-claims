@@ -3,10 +3,12 @@ from dateutil import parser
 from io import StringIO
 
 from flask_app import *
+for i in reversed(db.metadata.sorted_tables):
+    db.session.execute(i.delete())
+    db.session.commit()
 
 with open('timetable_3.csv','r') as f:
     string = f.read()
-string = string.replace('Dissection','Anatomy Dissection')
 
 batches = string.split('\t\t\t\t\t')
 
@@ -73,7 +75,3 @@ for batch,table in timetables.items():
 # Delete ALL!!!
 
 # Delete ALL!!!
-"""for i in reversed(db.metadata.sorted_tables):
-    db.session.execute(i.delete())
-    db.session.commit()
-"""
