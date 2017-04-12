@@ -7,13 +7,17 @@
   </head>
   <body>
     <div id="viewport">
-      <div>
+      <div class="show">
         <h1>Attendence Claims</h1>
         <p>Fill out the form below to claim attendence for events you've had to cover.</p>
       </div>
-      <div id="name">
+      <div id="name" class="show">
         <div class="tooltip">What's your name?</div>
         <input id="name_text" type="text"/>
+      </div>
+      <div id="email">
+        <div class="tooltip">Enter your email address.</div>
+        <input id="email_email" type="email"/>
       </div>
       <div id="number">
         <div class="tooltip">What's your roll number?</div>
@@ -77,13 +81,13 @@
         <div class="tooltip">Which event did you miss these classes for?</div>
         <input id="events_text" type="text"/>
       </div>
-      <div>
+      <div id="thankyou">
         <div>That's it! We'll process you're request for attendence claims and get back to you on it.</div>
       </div>
       <div id="validation"></div>
-      <div id="buttonTray">
-        <div></div>
-        <div></div>
+      <div id="buttonTray" class="show">
+        <div id="buttonTray_clearAll">Clear All</div>
+        <div id="buttonTray_next">Next</div>
       </div>
     </div>
 

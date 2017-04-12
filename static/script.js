@@ -166,7 +166,7 @@ function updateClasses (date, year, batch) {
       container.innerHTML = "";
       for (var i = 0; i < dayClasses_length; i++) {
         var ele = doc.createElement('div');
-        var txt = '<div><h2>CLASS_NAME</h2><p>START_TIME - END_TIME</p><p>DATE</p><div>DEPT</div></div><div><img/><input type="hidden"/></div>';
+        var txt = '<div><h2>CLASS_NAME</h2><p>START_TIME - END_TIME</p><span>DATE</span><div>DEPT</div></div><div><img/><input type="hidden"/></div>';
         txt = txt.replace('CLASS_NAME', dayClasses[i].name);
         txt = txt.replace('START_TIME', dayClasses[i].start_time);
         txt = txt.replace('END_TIME', dayClasses[i].end_time);
@@ -199,19 +199,17 @@ function updateClasses (date, year, batch) {
               addToSelectedClasses(this.parentNode);
             }
           }
-          else if (this.parentNode.parentNode.id === "classes_selection_selection") {
-            // search and make display block
-            var searchEles = document.getElementById('classes_datedList').childNodes;
-            var searchEles_length = searchEles.length;
-            console.log("SDF");
-            for (var i = 0; i < searchEles_length; i++) {
-              if (searchEles[i].querySelector('h2').textContent === this.parentNode.querySelector('h2').textContent && searchEles[i].querySelector('p:nth-child(1)').textContent === this.parentNode.querySelector('p:nth-child(1)').textContent) {
-
-              }
-            }
-            this.parentNode.parentNode.removeChild(this.parentNode);
-          }
         }, false);
+        var selectedClasses = document.getElementById('classes_selection_selection').childNodes;
+        var selectedClasses_length = selectedClasses.length;
+        var id = dayClasses[i].id;
+        var date = dayClasses[i].date;
+        for (var j = 0; j < selectedClasses_length; j++) {
+          var selectedClass = JSON.parse(selectedClasses[j].querySelector('input[type=hidden]').value);
+          if (selectedClass.id === id && selectedClass.date === date) {
+            ele.style.display = "none";
+          }
+        }
         container.appendChild(ele);
       }
     }
@@ -227,19 +225,44 @@ function addToSelectedClasses (node) {
     sel.value = node.querySelector("select").value;
     sel.parentNode.innerHTML = "<div>" + sel.value + "</div>";
   }
+  node_.querySelector('div:nth-child(2)').addEventListener('click', function () {
+    var searchEles = document.getElementById('classes_datedList').childNodes;
+    var searchEles_length = searchEles.length;
+    var this_ = JSON.parse(this.querySelector('input[type=hidden]').value);
+    for (var i = 0; i < searchEles_length; i++) {
+      searchEle = JSON.parse(searchEles[i].querySelector('input[type=hidden]').value);
+      if (searchEle.id === this_.id && searchEle.date === this_.date) {
+        searchEles[i].style.display = "table";
+      }
+    }
+    this.parentNode.parentNode.removeChild(this.parentNode);
+  }, false);
   document.getElementById('classes_selection_selection').appendChild(node_);
   node.style.display = "none";
 };
 function harvest () {
   var details = {};
   details.name = "" + document.getElementById('name_text').value;
+  details.email = "" + document.getElementById('email_email').value;
   details.rollNumber = "" + document.getElementById('number_number').value;
   details.serialNumber = "" + document.getElementById('serialNumber_number').value;
   details.year = "" + document.getElementById('year_years_selection').value;
   details.batch = "" + document.getElementById('batch_batches_selection').value;
-  details.selectedClasses = [];
+  var selected = [];
+  var selectedEles = document.getElementById('classes_selection_selection').childNodes;
+  var selectedEles_length = selectedEles.length;
+  for (var i = 0; i < selectedEles_length; i++) {
+    selected.push(JSON.parse(selectedEles[i].querySelector('input[type=hidden]').value));
+  }
+  details.selectedClasses = selected;
   details.event = "" + document.getElementById('events_text').value;
   return details;
+};
+function sendReq () {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("POST", '/classdata');
+  xmlhttp.setRequestHeader("Content-Type", "application/json");
+  xmlhttp.send(JSON.stringify(harvest()));
 };
 
 document.getElementById('classes_calendar_prev').addEventListener('click', function () {
@@ -285,8 +308,30 @@ for (var i = 0; i < eles_length; i++) {
     }, false);
   }
 }
-
-selectedClasses = [];
+document.getElementById('buttonTray_next').addEventListener('click', function () {
+  var pages = [
+    'name',
+    'email',
+    'number',
+    'serialNumber',
+    'year',
+    'batch',
+    'classes',
+    'events'
+  ];
+  var pages_length = pages.length;
+  for (var i = 0; i < pages_length; i++) {
+    var ele = document.getElementById('' + pages[i]);
+    // validation
+    if (ele.className !== 'show') {
+      ele.className = 'show';
+      return false;
+    }
+  }
+  sendReq();
+  document.getElementById('buttonTray').parentNode.removeChild(document.getElementById('buttonTray'));
+  document.getElementById('thankyou').className = "show";
+}, false);
 
 var d = new Date();
 var mm = d.getMonth();

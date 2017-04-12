@@ -26,6 +26,11 @@ body
 #viewport > div
 {
   padding:16px;
+  display:none;
+}
+#viewport > div.show
+{
+  display:block;
 }
 #viewport > div .tooltip
 {
@@ -36,7 +41,8 @@ body
   color:rgba(0,0,0,0.48);
 }
 #viewport > div input[type=text],
-#viewport > div input[type=number]
+#viewport > div input[type=number],
+#viewport > div input[type=email]
 {
   width:100%;
   font-size:24px;
@@ -120,7 +126,8 @@ body
   background:rgb(245,245,245);
   color:black;
 }
-#classes_datedList
+#classes_datedList,
+#classes_selection_selection
 {
   padding:8px;
 }
@@ -153,6 +160,17 @@ body
   font-size:0.9em;
   color:gray;
 }
+#classes_datedList > div > div:nth-child(1) > span
+{
+  display:none;
+}
+#classes_selection_selection > div > div:nth-child(1) > span
+{
+  display:block;
+  color:gray;
+  padding-left:8px;
+  font-size:0.8em;
+}
 #classes_datedList > div > div:nth-child(1) > div,
 #classes_selection_selection > div > div:nth-child(1) > div
 {
@@ -176,4 +194,9 @@ body
 {
   width:32px;
   height:32px;
+}
+
+#buttonTray > div
+{
+  cursor:pointer;
 }
