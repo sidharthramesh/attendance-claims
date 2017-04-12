@@ -10,6 +10,32 @@ app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 from models import *
+all_depts = """Anatomy
+Physiology
+Biochemistry
+Community Medicine
+Pathology
+Pharmacology
+Microbiology
+Forensic Medicine
+Medicine
+ENT
+OBG
+Opthalmology
+Surgery
+Paediatrics
+Pulmonary Medicine
+Orthopaedics""".splitlines()
+posting_depts = """Community Medicine
+Medicine
+ENT
+OBG
+Opthalmology
+Surgery
+Paediatrics
+Pulmonary Medicine
+Orthopaedics""".splitlines()
+
 def get_schedule(date,batch):
     day = dateutil.parser.parse(date).weekday()+1
     return Period.query.filter_by(day=day, batch = Batch.query.filter_by(name=batch).first()).order_by(Period.start_time).all()
@@ -32,9 +58,11 @@ def class_data():
         if date and batch:
             classes = []
             for period in get_schedule(date,batch):
-                class_obj = {'id':period.id, 'name' : period.name, 'start_time':str(period.start_time), 'end_time':str(period.end_time),'ask_dept':True}
-                if not period.department_id == None:
-                    class_obj['ask_dept'] = False
+                class_obj = {'id':period.id, 'name' : period.name, 'start_time':str(period.start_time), 'end_time':str(period.end_time),'department':all_depts}
+                if period.name == 'Postings':
+                    class_obj['department'] = posting_depts
+                if not period.department == None:
+                    class_obj['department'] = period.department.name
                 classes.append(class_obj)
             return jsonify(classes)
 
