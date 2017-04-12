@@ -3,7 +3,7 @@
   <head>
     <title>Manipal Attendence Claims</title>
     <meta name="viewport" content="width=device-width, user-scalable=no"/>
-    <link rel="stylesheet" href="/static/css/styles.css"/>
+    <link rel="stylesheet" href="{{url_for('static',filename = 'styles.css')}}"/>
   </head>
   <body>
     <div id="viewport">
@@ -67,17 +67,11 @@
             <tbody id="classes_calendar_dates"></tbody>
           </table>
         </div>
-        <div id="classes_datedList">
-          <div>
-            <div>
-              <h2>Class Name</h2>
-              <p>Start Time - End Time</p>
-              <div>Dept.</div>
-            </div>
-            <div>--></div>
-          </div>
+        <div id="classes_datedList"></div>
+        <div id="classes_selection">
+          <div class="tooltip">Selected Classes</div>
+          <div id="classes_selection_selection"></div>
         </div>
-        <div id="classes_selection">SELECTION</div>
       </div>
       <div id="events">
         <div class="tooltip">Which event did you miss these classes for?</div>
@@ -93,6 +87,6 @@
       </div>
     </div>
 
-    <script src="/static/js/script.js"></script>
+    <script src="{{url_for('static',filename = 'script.js')}}"></script>
   </body>
 </html>
