@@ -159,12 +159,77 @@ function updateClasses (date, year, batch) {
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       // TODO
-      console.log(this.responseText);
+      var dayClasses = JSON.parse(this.responseText);
+      var dayClasses_length = dayClasses.length;
+      var doc = document;
+      var container = document.getElementById('classes_datedList');
+      container.innerHTML = "";
+      for (var i = 0; i < dayClasses_length; i++) {
+        var ele = doc.createElement('div');
+        var txt = '<div><h2>CLASS_NAME</h2><p>START_TIME - END_TIME</p><p>DATE</p><div>DEPT</div></div><div><img/><input type="hidden"/></div>';
+        txt = txt.replace('CLASS_NAME', dayClasses[i].name);
+        txt = txt.replace('START_TIME', dayClasses[i].start_time);
+        txt = txt.replace('END_TIME', dayClasses[i].end_time);
+        txt = txt.replace('DATE', dayClasses[i].date);
+        if (dayClasses[i].department instanceof Array) {
+          var dpt_txt = "<select><option>Select the department</option><option>" + dayClasses[i].department.join("</option><option>") + "</option></select>";
+          txt = txt.replace('DEPT', dpt_txt);
+        }
+        else {
+          txt = txt.replace('DEPT', "<div>" + dayClasses[i].department + "</div>")
+        }
+        ele.innerHTML = txt;
+        ele.querySelector('input[type=hidden]').value = JSON.stringify(dayClasses[i]);
+        ele.querySelector('div:nth-child(2)').addEventListener('click', function () {
+          if (this.parentNode.parentNode.id === "classes_datedList") {
+              if (this.parentNode.querySelector("select")) {
+              if (this.parentNode.querySelector("select").value !== "Select the department") {
+                var dayClass = JSON.parse(this.parentNode.querySelector('input[type=hidden]').value);
+                if (dayClass.department.indexOf(this.parentNode.querySelector("select").value) > -1) {
+                  dayClass.department = this.parentNode.querySelector("select").value;
+                  this.parentNode.querySelector('input[type=hidden]').value = JSON.stringify(dayClass);
+                  addToSelectedClasses(this.parentNode);
+                }
+                else {
+                  // FORM VALIDATION
+                }
+              }
+            }
+            else {
+              addToSelectedClasses(this.parentNode);
+            }
+          }
+          else if (this.parentNode.parentNode.id === "classes_selection_selection") {
+            // search and make display block
+            var searchEles = document.getElementById('classes_datedList').childNodes;
+            var searchEles_length = searchEles.length;
+            console.log("SDF");
+            for (var i = 0; i < searchEles_length; i++) {
+              if (searchEles[i].querySelector('h2').textContent === this.parentNode.querySelector('h2').textContent && searchEles[i].querySelector('p:nth-child(1)').textContent === this.parentNode.querySelector('p:nth-child(1)').textContent) {
+
+              }
+            }
+            this.parentNode.parentNode.removeChild(this.parentNode);
+          }
+        }, false);
+        container.appendChild(ele);
+      }
     }
   };
   xhttp.open("GET", "/classdata?date=" + date + "&batch=" + year + "+Year+Batch+" + batch, true);
   xhttp.send();
 }
+function addToSelectedClasses (node) {
+  var selectedClass = node.querySelector('input[type=hidden]').value;
+  var node_ = node.cloneNode(true);
+  if (node.querySelector("select")) {
+    var sel = node_.querySelector("select");
+    sel.value = node.querySelector("select").value;
+    sel.parentNode.innerHTML = "<div>" + sel.value + "</div>";
+  }
+  document.getElementById('classes_selection_selection').appendChild(node_);
+  node.style.display = "none";
+};
 function harvest () {
   var details = {};
   details.name = "" + document.getElementById('name_text').value;
@@ -220,6 +285,8 @@ for (var i = 0; i < eles_length; i++) {
     }, false);
   }
 }
+
+selectedClasses = [];
 
 var d = new Date();
 var mm = d.getMonth();
