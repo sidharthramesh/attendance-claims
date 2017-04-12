@@ -1,0 +1,119 @@
+body
+{
+  width:100%;
+  height:100%;
+  padding:0px;
+  margin:0px;
+  position:absolute;
+  top:0px;
+  left:0px;
+  overflow:hidden;
+  background:rgb(20,186,136);
+}
+#viewport
+{
+  width:100%;
+  height:100%;
+  position:absolute;
+  top:0px;
+  left:0px;
+  overflow-x:hidden;
+  overflow-y:visible;
+}
+#viewport > div
+{
+  padding:16px;
+}
+#viewport > div .tooltip
+{
+  margin-bottom:8px;
+  font-family:sans-serif;
+  font-style:italic;
+  font-size:16px;
+  color:rgba(0,0,0,0.48);
+}
+#viewport > div input[type=text],
+#viewport > div input[type=number]
+{
+  width:100%;
+  font-size:24px;
+  padding:0px;
+  margin:0px;
+  background:transparent;
+  border:none;
+  outline:none;
+  border-bottom:1px solid rgba(0,0,0,0.48);
+}
+#validation
+{
+  display:none;
+}
+#buttonTray
+{
+  font-size:0px;
+}
+#buttonTray > div
+{
+  width:50%;
+  height:32px;
+  font-size:16px;
+  display:inline-block;
+}
+
+#year_years,
+#batch_batches
+{
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  font-family:sans-serif;
+}
+#year_years > div,
+#batch_batches > div
+{
+  padding:8px;
+  display: table-cell;
+  text-align: center;
+  cursor:pointer;
+  color:rgba(0,0,0,0.84);
+  transition:all 0.2s;
+}
+#year_years > div:hover,
+#batch_batches > div:hover
+{
+  background:rgba(0,0,0,0.16);
+}
+#year_years > div:active,
+#batch_batches > div:active
+{
+  background:rgba(0,0,0,0.32);
+}
+#year_years > div.selected,
+#batch_batches > div.selected
+{
+  background:rgb(245,245,245);
+  color:black;
+}
+
+#classes_calendar > table
+{
+  width:100%;
+}
+#classes_calendar > table td
+{
+  padding:8px;
+  cursor:pointer;
+}
+#classes_calendar > table td:hover
+{
+  background:rgba(0,0,0,0.16);
+}
+#classes_calendar > table td:active
+{
+  background:rgba(0,0,0,0.32);
+}
+#classes_calendar > table td.selected
+{
+  background:rgb(245,245,245);
+  color:black;
+}

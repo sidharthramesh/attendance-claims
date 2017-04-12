@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Manipal Attendence Claims</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no"/>
+    <link rel="stylesheet" href="static/css/styles.css"/>
+  </head>
+  <body>
+    <div id="viewport">
+      <div>
+        <h1>Attendence Claims</h1>
+        <p>Fill out the form below to claim attendence for events you've had to cover.</p>
+      </div>
+      <div id="name">
+        <div class="tooltip">What's your name?</div>
+        <input id="name_text" type="text"/>
+      </div>
+      <div id="number">
+        <div class="tooltip">What's your roll number?</div>
+        <input id="number_number" type="number"/>
+      </div>
+      <div id="year">
+        <div class="tooltip">Which year are you studying in?</div>
+        <div id="year_years" class="radio">
+          <div class="selected">1<sup>st</sup></div>
+          <div>2<sup>nd</sup></div>
+          <div>3<sup>rd</sup></div>
+          <div>4<sup>th</sup></div>
+          <input id="year_years_selection" type="hidden"/>
+        </div>
+      </div>
+      <div id="batch">
+        <div class="tooltip">Which batch are you in?</div>
+        <div id="batch_batches" class="radio">
+          <div class="selected">A</div>
+          <div>B</div>
+          <input id="batch_batches_selection" type="hidden"/>
+        </div>
+      </div>
+      <div id="classes">
+        <div class="tooltip">Select the classes you've missed.</div>
+        <div id="classes_calendar">
+          <table>
+            <thead>
+              <tr>
+                <th colspan="1" id="classes_calendar_prev"><</th>
+                <th colspan="5" id="classes_calendar_month">MONTH</th>
+                <th colspan="1" id="classes_calendar_next">></th>
+              </tr>
+              <tr>
+                <th colspan="7" id="classes_calendar_today">Today</th>
+              </tr>
+              <tr>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+                <th>Sun</th>
+              </tr>
+            </thead>
+            <tbody id="classes_calendar_dates"></tbody>
+          </table>
+        </div>
+        <div>CLASSES</div>
+        <div>SELECTION</div>
+      </div>
+      <div id="events">
+        <div class="tooltip">Which event did you miss these classes for?</div>
+        <input id="events_text" type="text"/>
+      </div>
+      <div>
+        <div>That's it! We'll process you're request for attendence claims and get back to you on it.</div>
+      </div>
+      <div id="validation"></div>
+      <div id="buttonTray">
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+
+    <script src="static/js/script.js"></script>
+  </body>
+</html>
