@@ -35,6 +35,7 @@ Surgery
 Paediatrics
 Pulmonary Medicine
 Orthopaedics""".splitlines()
+sample_post = {'name': 'Ash', 'email': 'ash@example.com', 'rollNumber': '150101007', 'serialNumber': '5', 'year': '2nd', 'batch': 'A', 'selectedClasses': [{'date': '2017-04-14', 'department': 'Surgery', 'end_time': '09:00:00', 'id': 68, 'name': 'Surgery', 'start_time': '08:00:00'}, {'date': '2017-04-14', 'department': 'Medicine', 'end_time': '12:30:00', 'id': 66, 'name': 'Postings', 'start_time': '09:30:00'}, {'date': '2017-04-14', 'department': 'Pathology', 'end_time': '15:00:00', 'id': 65, 'name': 'Pathology', 'start_time': '14:00:00'}, {'date': '2017-04-14', 'department': 'Community Medicine', 'end_time': '16:00:00', 'id': 67, 'name': 'Community Medicine practicals', 'start_time': '15:00:00'}, {'date': '2017-04-20', 'department': 'Pharmacology', 'end_time': '09:00:00', 'id': 64, 'name': 'Pharmacology', 'start_time': '08:00:00'}], 'event': 'UTSAV'}
 
 def get_schedule(date,batch):
     day = dateutil.parser.parse(date).weekday()+1
@@ -62,18 +63,19 @@ def class_data():
             return jsonify(classes)
     if request.method == 'POST':
         data = request.json
+        app.logger.info(str(data))
         user = User.query.filter_by(roll_no=int(data['rollNumber'])).first()
         new_user = False
         if user == None:
 
             new_user = True
-            user = User(roll_no = int(data['rollNumber'], name = data['name'],email = data['email'], serial = data['serialNumber']))
-            app.logger.info("User is {}".user.name)
+            user = User(roll_no = int(data['rollNumber']), name = data['name'],email = data['email'], serial = data['serialNumber'])
+            app.logger.info("User is {}".format(user.name))
             #db.add(u)
             #db.commit()
         for period in data['selectedClasses']:
             department = Department.query.filter_by(name = period['department']).first()
-            claim_obj = Claim(event = data['event'], user = user, date = period['date'], start_time=period['startTime'], end_time = period['endTime'],department = department )
+            claim_obj = Claim(event = data['event'], user = user, date = period['date'], start_time=period['start_time'], end_time = period['end_time'],department = department )
             app.logger.info(str(claim_obj))
             #db.add(claim_obj)
             #db.commit()

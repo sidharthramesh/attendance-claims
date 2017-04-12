@@ -309,7 +309,7 @@ for (var i = 0; i < eles_length; i++) {
   }
 }
 document.getElementById('buttonTray_next').addEventListener('click', function () {
-  var pages = [
+  /*var pages = [
     'name',
     'email',
     'number',
@@ -327,9 +327,9 @@ document.getElementById('buttonTray_next').addEventListener('click', function ()
       ele.className = 'show';
       return false;
     }
-  }
+  }*/
   sendReq();
-  document.getElementById('buttonTray').parentNode.removeChild(document.getElementById('buttonTray'));
+  //document.getElementById('buttonTray').parentNode.removeChild(document.getElementById('buttonTray'));
   document.getElementById('thankyou').className = "show";
 }, false);
 
