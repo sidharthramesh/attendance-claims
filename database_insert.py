@@ -6,6 +6,7 @@ from flask_app import *
 
 with open('timetable_3.csv','r') as f:
     string = f.read()
+string = string.replace('Dissection','Anatomy Dissection')
 
 batches = string.split('\t\t\t\t\t')
 
