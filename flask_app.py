@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 import dateutil.parser
 from config import SQLALCHEMY_DATABASE_URI
 from flask_migrate import Migrate
-app = Flask(__name__,static_url_path='/static')
+app = Flask(__name__,static_url_path='/assets')
 app.config["DEBUG"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
