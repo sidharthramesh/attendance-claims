@@ -58,13 +58,14 @@ for batch,table in timetables.items():
         for time,period in classes.items():
             if isinstance(period, str):
                 [start_time,end_time] = [parser.parse(a).time() for a in time.split(' to ')]
+                department = None
                 for dep in depts:
                     if dep in period:
                         department = dep
-                    else:
-                        department = None
-                p = Period(name = period, start_time = start_time, end_time=end_time, batch = batch_obj, day = int(day+1))
-                print('done...')
+                        break
+                print("{} {}".format(period,department))
+                department = Department.query.filter_by(name = department).first()
+                p = Period(name = period, start_time = start_time, end_time=end_time, batch = batch_obj, day = int(day+1),department = department)
                 db.session.add(p)
                 db.session.commit()
 
