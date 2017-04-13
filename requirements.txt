@@ -1,2 +1,4 @@
 Flask-Migrate
 flask_sqlalchemy
+dateutil
+pandas
