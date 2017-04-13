@@ -1,4 +1,4 @@
 Flask-Migrate
 flask_sqlalchemy
-dateutil
+python-dateutil
 pandas

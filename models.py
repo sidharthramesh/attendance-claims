@@ -2,10 +2,10 @@ from flask_app import db
 
 class Department(db.Model):
     id = db.Column(db.Integer,primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String(40))
     classes = db.relationship('Period',backref='department',lazy='dynamic')
-    username = db.Column(db.String)
-    password = db.Column(db.String)
+    username = db.Column(db.String(40))
+    password = db.Column(db.String(40))
     claims = db.relationship('Claim',backref = 'department',lazy='dynamic')
     def __repr__(self):
         return "<department {}>".format(self.name)
@@ -13,7 +13,7 @@ class Department(db.Model):
 class Period(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     batch_id = db.Column(db.Integer, db.ForeignKey('batch.id'))
-    name = db.Column(db.String)
+    name = db.Column(db.String(40))
     start_time = db.Column(db.Time)
     end_time = db.Column(db.Time)
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
@@ -24,14 +24,14 @@ class Period(db.Model):
 
 class Batch(db.Model):
     id = db.Column(db.Integer,primary_key = True)
-    name = db.Column(db.String)
+    name = db.Column(db.String(40))
     classes = db.relationship('Period',backref='batch',lazy='dynamic')
     def __repr__(self):
         return "<batch {}>".format(self.name)
 
 class Claim(db.Model):
     id = db.Column(db.Integer,primary_key = True)
-    event = db.Column(db.String)
+    event = db.Column(db.String(40))
     user_id = db.Column(db.Integer,db.ForeignKey('user.id'))
     date = db.Column(db.Date)
     start_time = db.Column(db.Time)
@@ -48,8 +48,8 @@ class Claim(db.Model):
 class User(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     roll_no = db.Column(db.Integer)
-    name = db.Column(db.String)
-    email = db.Column(db.String)
+    name = db.Column(db.String(40))
+    email = db.Column(db.String(40))
     serial = db.Column(db.Integer)
     claims = db.relationship('Claim',backref='user',lazy='dynamic')
     def __repr__(self):
