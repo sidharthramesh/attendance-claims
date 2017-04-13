@@ -1,4 +1,4 @@
-from flask import request, Flask, render_template,jsonify
+from flask import request, Flask, render_template,jsonify, redirect
 from flask_sqlalchemy import SQLAlchemy
 import dateutil.parser
 from config import SQLALCHEMY_DATABASE_URI
@@ -42,6 +42,12 @@ def get_schedule(date,batch):
     return Period.query.filter_by(day=day, batch = Batch.query.filter_by(name=batch).first()).order_by(Period.start_time).all()
 def process_claim(data):
     pass
+def get_time(string):
+    d = dateutil.parser.parse(string)
+    return d.time()
+def get_date(string):
+    d = dateutil.parser.parse(string)
+    return d.date()
 @app.route('/',methods = ['GET','POST'])
 def index():
     return render_template('index.html')
@@ -70,21 +76,33 @@ def class_data():
 
             new_user = True
             user = User(roll_no = int(data['rollNumber']), name = data['name'],email = data['email'], serial = data['serialNumber'])
-            app.logger.info("User is {}".format(user.name))
-            #db.add(u)
-            #db.commit()
+            #app.logger.info("User is {}".format(user.name))
+            try:
+                db.session.add(user)
+                db.session.commit()
+            except:
+                db.session.rollback()
+                raise
+
         for period in data['selectedClasses']:
             department = Department.query.filter_by(name = period['department']).first()
-            claim_obj = Claim(event = data['event'], user = user, date = period['date'], start_time=period['start_time'], end_time = period['end_time'],department = department )
+            claim_obj = Claim(event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
             app.logger.info(str(claim_obj))
-            #db.add(claim_obj)
-            #db.commit()
+            try:
+                db.session.add(claim_obj)
+                db.session.commit()
+            except:
+                db.session.rollback()
+                return jsonify({"status":"failed"})
+                raise
+        return jsonify({"status":"success"})
+
 @app.route('/status_check',methods = ['GET','POST'])
 def status_check():
     pass
 @app.route('/login',methods = ['GET','POST'])
 def login():
-    pass
+    return "Login page work in progress"
 @app.errorhandler(404)
 def page_not_found(e):
     """Return a custom 404 error."""

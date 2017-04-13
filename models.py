@@ -44,7 +44,7 @@ class Claim(db.Model):
 
     def __repr__(self):
         approval_status = self.approval_js + self.approval_office +self.approval_dept
-        return "<{date} for {user}. Approval status: {approval}>".format(date = self.date, user = self.user, approval=approval_status)
+        return "<{date} {event} for {user} {department}. Approval status: {approval}>".format(date = self.date, event = self.event, user = self.user, approval=approval_status,department = self.department)
 class User(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     roll_no = db.Column(db.Integer)
