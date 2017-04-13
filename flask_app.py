@@ -10,32 +10,9 @@ app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 from models import *
-all_depts = """Anatomy
-Physiology
-Biochemistry
-Community Medicine
-Pathology
-Pharmacology
-Microbiology
-Forensic Medicine
-Medicine
-ENT
-OBG
-Opthalmology
-Surgery
-Paediatrics
-Pulmonary Medicine
-Orthopaedics""".splitlines()
-posting_depts = """Community Medicine
-Medicine
-ENT
-OBG
-Opthalmology
-Surgery
-Paediatrics
-Pulmonary Medicine
-Orthopaedics""".splitlines()
-sample_post = {'name': 'Ash', 'email': 'ash@example.com', 'rollNumber': '150101007', 'serialNumber': '5', 'year': '2nd', 'batch': 'A', 'selectedClasses': [{'date': '2017-04-14', 'department': 'Surgery', 'end_time': '09:00:00', 'id': 68, 'name': 'Surgery', 'start_time': '08:00:00'}, {'date': '2017-04-14', 'department': 'Medicine', 'end_time': '12:30:00', 'id': 66, 'name': 'Postings', 'start_time': '09:30:00'}, {'date': '2017-04-14', 'department': 'Pathology', 'end_time': '15:00:00', 'id': 65, 'name': 'Pathology', 'start_time': '14:00:00'}, {'date': '2017-04-14', 'department': 'Community Medicine', 'end_time': '16:00:00', 'id': 67, 'name': 'Community Medicine practicals', 'start_time': '15:00:00'}, {'date': '2017-04-20', 'department': 'Pharmacology', 'end_time': '09:00:00', 'id': 64, 'name': 'Pharmacology', 'start_time': '08:00:00'}], 'event': 'UTSAV'}
+from database_insert import depts, posting_depts
+all_depts = depts.splitlines()
+posting_depts = posting_depts.splitlines()
 
 def get_schedule(date,batch):
     day = dateutil.parser.parse(date).weekday()+1

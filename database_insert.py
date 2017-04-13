@@ -29,7 +29,23 @@ Opthalmology
 Surgery
 Paediatrics
 Pulmonary Medicine
-Orthopaedics"""
+Orthopaedics
+Dental
+Dermatology
+Neurology"""
+
+posting_depts = """Community Medicine
+Medicine
+ENT
+OBG
+Opthalmology
+Surgery
+Paediatrics
+Pulmonary Medicine
+Orthopaedics
+Dental
+Dermatology
+Neurology"""
 
 depts = depts.splitlines()
 
@@ -71,8 +87,3 @@ for batch,table in timetables.items():
                 p = Period(name = period, start_time = start_time, end_time=end_time, batch = batch_obj, day = int(day+1),department = department)
                 db.session.add(p)
                 db.session.commit()
-
-# Delete ALL!!!
-#for i in reversed(db.metadata.sorted_tables):
-#    db.session.execute(i.delete())
-#    db.session.commit()
