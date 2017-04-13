@@ -14,38 +14,7 @@ batches_new = [batch[1:] if batch[0]=='\n' else batch for batch in batches]
 
 batches = batches_new
 
-depts = """Anatomy
-Physiology
-Biochemistry
-Community Medicine
-Pathology
-Pharmacology
-Microbiology
-Forensic Medicine
-Medicine
-ENT
-OBG
-Opthalmology
-Surgery
-Paediatrics
-Pulmonary Medicine
-Orthopaedics
-Dental
-Dermatology
-Neurology"""
-
-posting_depts = """Community Medicine
-Medicine
-ENT
-OBG
-Opthalmology
-Surgery
-Paediatrics
-Pulmonary Medicine
-Orthopaedics
-Dental
-Dermatology
-Neurology"""
+from departments import depts
 
 depts = depts.splitlines()
 

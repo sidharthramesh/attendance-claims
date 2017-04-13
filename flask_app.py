@@ -10,7 +10,7 @@ app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 from models import *
-from database_insert import depts, posting_depts
+from departments import depts, posting_depts
 all_depts = depts.splitlines()
 posting_depts = posting_depts.splitlines()
 
