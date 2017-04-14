@@ -2,3 +2,4 @@ Flask-Migrate
 flask_sqlalchemy
 python-dateutil
 pandas
+mysql

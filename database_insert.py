@@ -47,7 +47,6 @@ Dental
 Dermatology
 Neurology"""
 
-depts = depts.splitlines()
 
 timetables = {}
 for table in batches:
@@ -61,7 +60,7 @@ for table in batches:
 
 print(timetables.keys())
 
-for dep in depts:
+for dep in depts.splitlines():
     com = dep.split(' ')[0].lower()
     obj = Department(name = dep, username = com, password = com+'123password')
     db.session.add(obj)
