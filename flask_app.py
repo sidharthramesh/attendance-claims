@@ -77,6 +77,10 @@ def class_data():
 @app.route('/status_check',methods = ['GET','POST'])
 def status_check():
     pass
+@app.route('/all')
+def view_all():
+
+    pass
 @app.route('/login',methods = ['GET','POST'])
 def login():
     return "Login page work in progress"
