@@ -18,7 +18,6 @@ class Period(db.Model):
     end_time = db.Column(db.Time)
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     day = db.Column(db.Integer)
-    claims = db.relationship('Claim',backref='period',lazy='dynamic')
     def __repr__(self):
         return "<{name}  {start} to {end}>".format(name=self.name,start=self.start_time,end=self.end_time)
 
