@@ -79,8 +79,7 @@ def status_check():
     pass
 @app.route('/all')
 def view_all():
-
-    pass
+    return render_template('table.html',claims = Claim.query.all())
 @app.route('/login',methods = ['GET','POST'])
 def login():
     return "Login page work in progress"
