@@ -37,7 +37,7 @@ def class_data():
         if date and batch:
             classes = []
             for period in get_schedule(date,batch):
-                class_obj = {'id':period.id, 'name' : period.name, 'start_time':str(period.start_time), 'end_time':str(period.end_time),'department':all_depts,'date':date}
+                class_obj = {'id':period.id, 'name' : period.name, 'start_time':str(period.start_time.strftime("%I:%M %p")), 'end_time':str(period.end_time.strftime("%I:%M %p")),'department':all_depts,'date':date}
                 if period.name == 'Postings':
                     class_obj['department'] = posting_depts
                 if not period.department == None:
