@@ -4,7 +4,7 @@ from io import StringIO
 
 from flask_app import *
 from models import *
-
+db.create_all()
 with open('timetable_NEW.csv','r') as f:
     string = f.read()
 
