@@ -25,6 +25,8 @@ def get_time(string):
 def get_date(string):
     d = dateutil.parser.parse(string)
     return d.date()
+def get_12hr(time):
+    return time.strftime("%I:%M %p")
 @app.route('/',methods = ['GET','POST'])
 def index():
     return render_template('index.html')
@@ -37,7 +39,7 @@ def class_data():
         if date and batch:
             classes = []
             for period in get_schedule(date,batch):
-                class_obj = {'id':period.id, 'name' : period.name, 'start_time':str(period.start_time.strftime("%I:%M %p")), 'end_time':str(period.end_time.strftime("%I:%M %p")),'department':all_depts,'date':date}
+                class_obj = {'id':period.id, 'name' : period.name, 'start_time':get_12hr(period.start_time), 'end_time':get_12hr(period.end_time),'department':all_depts,'date':date}
                 if period.name == 'Postings':
                     class_obj['department'] = posting_depts
                 if not period.department == None:
@@ -46,7 +48,7 @@ def class_data():
             return jsonify(classes)
     if request.method == 'POST':
         data = request.json
-        app.logger.info(str(data))
+        #app.logger.info(str(data))
         user = User.query.filter_by(roll_no=int(data['rollNumber'])).first()
         new_user = False
         if user == None:
@@ -79,7 +81,17 @@ def status_check():
     pass
 @app.route('/all')
 def view_all():
-    return render_template('table.html',claims = Claim.query.all())
+    claims = []
+    for claim in Claim.query.all():
+        c = {}
+        c['event'] = claim.event
+        c['date'] = claim.date
+        c['serial'] = claim.user.serial
+        c['name'] = claim.user.name
+        c['period'] = claim.period.name
+        c['time'] = "{} to {}".format(get_12hr(claim.period.start_time),get_12hr(claim.period.end_time))
+        claims.append(c)
+    return render_template('table.html',claims = claims)
 @app.route('/login',methods = ['GET','POST'])
 def login():
     return "Login page work in progress"
