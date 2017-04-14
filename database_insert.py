@@ -4,7 +4,7 @@ from io import StringIO
 
 from flask_app import *
 from models import *
-
+db.create_all()
 with open('timetable_NEW.csv','r') as f:
     string = f.read()
 
@@ -14,22 +14,7 @@ batches_new = [batch[1:] if batch[0]=='\n' else batch for batch in batches]
 
 batches = batches_new
 
-depts = """Anatomy
-Physiology
-Biochemistry
-Community Medicine
-Pathology
-Pharmacology
-Microbiology
-Forensic Medicine
-Medicine
-ENT
-OBG
-Opthalmology
-Surgery
-Paediatrics
-Pulmonary Medicine
-Orthopaedics"""
+from departments import depts
 
 depts = depts.splitlines()
 
@@ -71,8 +56,3 @@ for batch,table in timetables.items():
                 p = Period(name = period, start_time = start_time, end_time=end_time, batch = batch_obj, day = int(day+1),department = department)
                 db.session.add(p)
                 db.session.commit()
-
-# Delete ALL!!!
-#for i in reversed(db.metadata.sorted_tables):
-#    db.session.execute(i.delete())
-#    db.session.commit()

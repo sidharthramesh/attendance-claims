@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>All Claims</title>
+  </head>
+  <body>
+    <table>
+  <tr>
+    <th>Event</th>
+    <th>Date</th>
+    <th>Serial No</th>
+    <th>Name</th>
+    <th>Class</th>
+    <th>Timing</th>
+  </tr>
+  {%for claim in claims%}
+  <tr>
+    <td>{{claim.event}}</td>
+    <td>{{claim.date}}</td>
+    <td>{{claim.serial}}</td>
+    <td>{{claim.name}}</td>
+    <td>{{claim.period}}</td>
+    <td>{{claim.time}}</td>
+  </tr>
+  {%endfor%}
+</table>
+  </body>
+</html>

@@ -10,32 +10,9 @@ app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 from models import *
-all_depts = """Anatomy
-Physiology
-Biochemistry
-Community Medicine
-Pathology
-Pharmacology
-Microbiology
-Forensic Medicine
-Medicine
-ENT
-OBG
-Opthalmology
-Surgery
-Paediatrics
-Pulmonary Medicine
-Orthopaedics""".splitlines()
-posting_depts = """Community Medicine
-Medicine
-ENT
-OBG
-Opthalmology
-Surgery
-Paediatrics
-Pulmonary Medicine
-Orthopaedics""".splitlines()
-sample_post = {'name': 'Ash', 'email': 'ash@example.com', 'rollNumber': '150101007', 'serialNumber': '5', 'year': '2nd', 'batch': 'A', 'selectedClasses': [{'date': '2017-04-14', 'department': 'Surgery', 'end_time': '09:00:00', 'id': 68, 'name': 'Surgery', 'start_time': '08:00:00'}, {'date': '2017-04-14', 'department': 'Medicine', 'end_time': '12:30:00', 'id': 66, 'name': 'Postings', 'start_time': '09:30:00'}, {'date': '2017-04-14', 'department': 'Pathology', 'end_time': '15:00:00', 'id': 65, 'name': 'Pathology', 'start_time': '14:00:00'}, {'date': '2017-04-14', 'department': 'Community Medicine', 'end_time': '16:00:00', 'id': 67, 'name': 'Community Medicine practicals', 'start_time': '15:00:00'}, {'date': '2017-04-20', 'department': 'Pharmacology', 'end_time': '09:00:00', 'id': 64, 'name': 'Pharmacology', 'start_time': '08:00:00'}], 'event': 'UTSAV'}
+from departments import depts, posting_depts
+all_depts = depts.splitlines()
+posting_depts = posting_depts.splitlines()
 
 def get_schedule(date,batch):
     day = dateutil.parser.parse(date).weekday()+1
@@ -48,6 +25,8 @@ def get_time(string):
 def get_date(string):
     d = dateutil.parser.parse(string)
     return d.date()
+def get_12hr(time):
+    return time.strftime("%I:%M %p")
 @app.route('/',methods = ['GET','POST'])
 def index():
     return render_template('index.html')
@@ -60,7 +39,7 @@ def class_data():
         if date and batch:
             classes = []
             for period in get_schedule(date,batch):
-                class_obj = {'id':period.id, 'name' : period.name, 'start_time':str(period.start_time), 'end_time':str(period.end_time),'department':all_depts,'date':date}
+                class_obj = {'id':period.id, 'name' : period.name, 'start_time':get_12hr(period.start_time), 'end_time':get_12hr(period.end_time),'department':all_depts,'date':date}
                 if period.name == 'Postings':
                     class_obj['department'] = posting_depts
                 if not period.department == None:
@@ -69,7 +48,7 @@ def class_data():
             return jsonify(classes)
     if request.method == 'POST':
         data = request.json
-        app.logger.info(str(data))
+        #app.logger.info(str(data))
         user = User.query.filter_by(roll_no=int(data['rollNumber'])).first()
         new_user = False
         if user == None:
@@ -86,8 +65,8 @@ def class_data():
 
         for period in data['selectedClasses']:
             department = Department.query.filter_by(name = period['department']).first()
-            claim_obj = Claim(event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
-            app.logger.info(str(claim_obj))
+            claim_obj = Claim(period = period['name'], event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
+            #app.logger.info(str(claim_obj))
             try:
                 db.session.add(claim_obj)
                 db.session.commit()
@@ -100,6 +79,19 @@ def class_data():
 @app.route('/status_check',methods = ['GET','POST'])
 def status_check():
     pass
+@app.route('/all')
+def view_all():
+    claims = []
+    for claim in Claim.query.all():
+        c = {}
+        c['event'] = claim.event
+        c['date'] = claim.date
+        c['serial'] = claim.user.serial
+        c['name'] = claim.user.name
+        c['period'] = claim.period
+        c['time'] = "{} to {}".format(get_12hr(claim.start_time),get_12hr(claim.end_time))
+        claims.append(c)
+    return render_template('table.html',claims = claims)
 @app.route('/login',methods = ['GET','POST'])
 def login():
     return "Login page work in progress"
