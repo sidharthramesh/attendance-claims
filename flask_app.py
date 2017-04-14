@@ -88,8 +88,8 @@ def view_all():
         c['date'] = claim.date
         c['serial'] = claim.user.serial
         c['name'] = claim.user.name
-        c['period'] = claim.period.name
-        c['time'] = "{} to {}".format(get_12hr(claim.period.start_time),get_12hr(claim.period.end_time))
+        c['period'] = claim.period
+        c['time'] = "{} to {}".format(get_12hr(claim.start_time),get_12hr(claim.end_time))
         claims.append(c)
     return render_template('table.html',claims = claims)
 @app.route('/login',methods = ['GET','POST'])
