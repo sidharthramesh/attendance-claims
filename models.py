@@ -36,7 +36,7 @@ class Claim(db.Model):
     date = db.Column(db.Date)
     start_time = db.Column(db.Time)
     end_time = db.Column(db.Time)
-    period_id = db.Column(db.Integer, db.ForeignKey('period.id'))
+    period = db.Column(db.String(40))
     department_id = db.Column(db.Integer, db.ForeignKey('department.id'))
     approval_js = db.Column(db.Integer, default = 0)
     approval_office = db.Column(db.Integer, default = 0)

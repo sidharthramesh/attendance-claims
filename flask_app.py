@@ -65,8 +65,8 @@ def class_data():
 
         for period in data['selectedClasses']:
             department = Department.query.filter_by(name = period['department']).first()
-            claim_obj = Claim(event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
-            app.logger.info(str(claim_obj))
+            claim_obj = Claim(period = period['name'], event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
+            #app.logger.info(str(claim_obj))
             try:
                 db.session.add(claim_obj)
                 db.session.commit()
