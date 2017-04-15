@@ -1,4 +1,4 @@
-from flask import request, Flask, render_template,jsonify, redirect
+from flask import request, Flask, render_template,jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 import dateutil.parser
 from config import SQLALCHEMY_DATABASE_URI
@@ -74,7 +74,8 @@ def class_data():
                 db.session.rollback()
                 return jsonify({"status":"failed"})
                 raise
-        return jsonify({"status":"success"})
+        return redirect(url_for('all'))
+        #return jsonify({"status":"success"})
 
 @app.route('/status_check',methods = ['GET','POST'])
 def status_check():
