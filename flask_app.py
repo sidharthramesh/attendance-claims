@@ -74,7 +74,7 @@ def class_data():
                 db.session.rollback()
                 return jsonify({"status":"failed"})
                 raise
-        return redirect(url_for('all'))
+        return redirect('/all')
         #return jsonify({"status":"success"})
 
 @app.route('/status_check',methods = ['GET','POST'])
