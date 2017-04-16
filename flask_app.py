@@ -90,20 +90,22 @@ def class_data():
             except:
                 db.session.rollback()
                 raise
-
+        id_index = []
         for period in data['selectedClasses']:
             department = Department.query.filter_by(name = period['department']).first()
+            batch = Batch.query.filter_by(name = data['year']+' Year Batch '+data['batch']).first()
             # add semester mapping from data['year']
             claim_obj = Claim(period = period['name'], event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
             #app.logger.info(str(claim_obj))
             try:
                 db.session.add(claim_obj)
                 db.session.commit()
+                id_index.append(claim_obj.id)
             except:
                 db.session.rollback()
                 return jsonify({"status":"failed"})
                 raise
-        return jsonify({"status":"success"})
+        return jsonify(id_index)
         #return jsonify({"status":"success"})
 
 @app.route('/status_check',methods = ['GET','POST'])
@@ -135,9 +137,9 @@ def view_all():
 def make_excel():
     ids = request.json['ids']
     claims_objs = get_new_by_ids(ids)
-    claims = [['Name', 'Roll no', 'Serial', 'Event', 'Date', 'Class', 'Time', 'Semester']]
+    claims = [['Serial', 'Roll no','Name','Date','Class','Time','Event','Semester']]
     for claim in claims_objs:
-        c = [claim.user.name, claim.user.roll_no, claim.user.serial,claim.event,claim.date,claim.period,'{} to {}'.format(get_12hr(claim.start_time),get_12hr(claim.end_time)),'#sem']
+        c = [claim.user.serial,claim.user.roll_no,claim.user.name,claim.date,claim.period,'{} to {}'.format(get_12hr(claim.start_time),get_12hr(claim.end_time)),claim.event,claim.batch.semester]
         claims.append(c)
     return excel.make_response_from_array(claims, "csv", file_name="Claims_on_{}".format(str(date.today())))
     #return render_template('table.html',claims = claims)

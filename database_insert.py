@@ -5,6 +5,8 @@ from io import StringIO
 from flask_app import *
 from models import *
 db.create_all()
+sem_index = {'2nd Year Batch A':4, '2nd Year Batch B':4,'3rd Year Batch A':6, '3rd Year Batch B':6, '4th Year Batch A':8, '4th Year Batch B':8, '1st Year Batch A':2, '1st Year Batch B':2}
+
 with open('timetable_NEW.csv','r') as f:
     string = f.read()
 
@@ -27,9 +29,6 @@ for table in batches:
     timetables[batch] = t
 
 
-
-print(timetables.keys())
-
 for dep in depts:
     com = dep.split(' ')[0].lower()
     obj = Department(name = dep, username = com, password = com+'123password')
@@ -39,7 +38,7 @@ db.session.commit()
 Department.query.all()
 
 for batch,table in timetables.items():
-    batch_obj = Batch(name = batch)
+    batch_obj = Batch(name = batch, semester = int(sem_index[batch]))
     db.session.add(batch_obj)
     db.session.commit()
     for day,classes in table.items():
