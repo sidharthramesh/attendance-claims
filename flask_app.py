@@ -3,6 +3,8 @@ from flask_sqlalchemy import SQLAlchemy
 import dateutil.parser
 from config import SQLALCHEMY_DATABASE_URI
 from flask_migrate import Migrate
+import flask_excel as excel
+from datetime import date
 app = Flask(__name__,static_url_path='/static')
 app.config["DEBUG"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
@@ -27,6 +29,33 @@ def get_date(string):
     return d.date()
 def get_12hr(time):
     return time.strftime("%I:%M %p")
+def parse_claim(claim):
+    c = {}
+    c['id'] = claim.id
+    c['Event'] = claim.event
+    c['Date'] = claim.date
+    c['Serial'] = claim.user.serial
+    c['Roll no'] = claim.user.roll_no
+    c['Name'] = claim.user.name
+    c['Period'] = claim.period
+    c['Time'] = "{} to {}".format(get_12hr(claim.start_time),get_12hr(claim.end_time))
+    return c
+def parse_claims_list(claims):
+    return [parse_claim(claim) for claim in claims]
+def get_all():
+    claims = []
+    for claim in Claim.query.all():
+        c = parse_claim(claim)
+        claims.append(c)
+    return claims
+def get_allnew():
+    claims = []
+    for claim in Claim.query.filter(Claim.approval_js == 0).all():
+        c = parse_claim(claim)
+        claims.append(c)
+    return claims
+def get_new_by_ids(ids):
+    return Claim.query.filter(Claim.id.in_(ids), Claim.approval_js == 0).all()
 @app.route('/',methods = ['GET','POST'])
 def index():
     return render_template('index.html')
@@ -48,7 +77,6 @@ def class_data():
             return jsonify(classes)
     if request.method == 'POST':
         data = request.json
-        #app.logger.info(str(data))
         user = User.query.filter_by(roll_no=int(data['rollNumber'])).first()
         new_user = False
         if user == None:
@@ -65,6 +93,7 @@ def class_data():
 
         for period in data['selectedClasses']:
             department = Department.query.filter_by(name = period['department']).first()
+            # add semester mapping from data['year']
             claim_obj = Claim(period = period['name'], event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
             #app.logger.info(str(claim_obj))
             try:
@@ -74,25 +103,44 @@ def class_data():
                 db.session.rollback()
                 return jsonify({"status":"failed"})
                 raise
-        return redirect('/all')
+        return jsonify({"status":"success"})
         #return jsonify({"status":"success"})
 
 @app.route('/status_check',methods = ['GET','POST'])
 def status_check():
     pass
-@app.route('/all')
+@app.route('/claims',methods = ['GET','POST'])
 def view_all():
-    claims = []
-    for claim in Claim.query.all():
-        c = {}
-        c['event'] = claim.event
-        c['date'] = claim.date
-        c['serial'] = claim.user.serial
-        c['name'] = claim.user.name
-        c['period'] = claim.period
-        c['time'] = "{} to {}".format(get_12hr(claim.start_time),get_12hr(claim.end_time))
+    if request.method == 'GET':
+        f = request.args.get('filter')
+        if f == 'all':
+            return jsonify(get_all())
+        if f == 'new':
+            return jsonify(get_allnew())
+    if request.method == 'POST':
+        data = request.json
+        approved = get_new_by_ids(data['ids'])
+        if data['auth'] == 'secret_password123':
+            for claim in approved:
+                claim.approval_js = 1
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+                    return jsonify({"status":"failed"})
+                    raise
+        return jsonify({"status":"success"})
+
+@app.route('/download', methods = ['POST'])
+def make_excel():
+    ids = request.json['ids']
+    claims_objs = get_new_by_ids(ids)
+    claims = [['Name', 'Roll no', 'Serial', 'Event', 'Date', 'Class', 'Time', 'Semester']]
+    for claim in claims_objs:
+        c = [claim.user.name, claim.user.roll_no, claim.user.serial,claim.event,claim.date,claim.period,'{} to {}'.format(get_12hr(claim.start_time),get_12hr(claim.end_time)),'#sem']
         claims.append(c)
-    return render_template('table.html',claims = claims)
+    return excel.make_response_from_array(claims, "csv", file_name="Claims_on_{}".format(str(date.today())))
+    #return render_template('table.html',claims = claims)
 @app.route('/login',methods = ['GET','POST'])
 def login():
     return "Login page work in progress"

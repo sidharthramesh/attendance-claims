@@ -40,10 +40,11 @@ class Claim(db.Model):
     approval_js = db.Column(db.Integer, default = 0)
     approval_office = db.Column(db.Integer, default = 0)
     approval_dept = db.Column(db.Integer, default = 0)
-
+    #semester = db.Column(db.Integer)
     def __repr__(self):
         approval_status = self.approval_js + self.approval_office +self.approval_dept
         return "<{date} {event} for {user} {department}. Approval status: {approval}>".format(date = self.date, event = self.event, user = self.user, approval=approval_status,department = self.department)
+
 class User(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     roll_no = db.Column(db.Integer)
