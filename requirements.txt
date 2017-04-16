@@ -3,3 +3,4 @@ flask_sqlalchemy
 python-dateutil
 pandas
 mysql
+Flask-Excel
