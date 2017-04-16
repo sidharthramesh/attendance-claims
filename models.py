@@ -25,6 +25,8 @@ class Batch(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     name = db.Column(db.String(40))
     classes = db.relationship('Period',backref='batch',lazy='dynamic')
+    semester = db.Column(db.Integer)
+    claims = db.relationship('Claim',backref='batch', lazy = 'dynamic')
     def __repr__(self):
         return "<batch {}>".format(self.name)
 
@@ -40,7 +42,7 @@ class Claim(db.Model):
     approval_js = db.Column(db.Integer, default = 0)
     approval_office = db.Column(db.Integer, default = 0)
     approval_dept = db.Column(db.Integer, default = 0)
-    #semester = db.Column(db.Integer)
+    batch_id = db.Column(db.Integer,db.ForeignKey('batch.id'))
     def __repr__(self):
         approval_status = self.approval_js + self.approval_office +self.approval_dept
         return "<{date} {event} for {user} {department}. Approval status: {approval}>".format(date = self.date, event = self.event, user = self.user, approval=approval_status,department = self.department)
