@@ -7,7 +7,7 @@ SQLALCHEMY_POOL_RECYCLE = 299
 
 SQLALCHEMY_DATABASE_URI = "mysql+mysqlconnector://{username}:{password}@{hostname}/{databasename}".format(
     username="tornadoalert",
-    password="Supernova-7",
+    password="databasepassword123",
     hostname="tornadoalert.mysql.pythonanywhere-services.com",
     databasename="tornadoalert$claims",
 )
