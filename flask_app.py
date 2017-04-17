@@ -95,7 +95,7 @@ def class_data():
             department = Department.query.filter_by(name = period['department']).first()
             batch = Batch.query.filter_by(name = data['year']+' Year Batch '+data['batch']).first()
             # add semester mapping from data['year']
-            claim_obj = Claim(period = period['name'], event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
+            claim_obj = Claim(period = period['name'],batch=batch, event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
             #app.logger.info(str(claim_obj))
             try:
                 db.session.add(claim_obj)
@@ -137,7 +137,7 @@ def view_all():
 def make_excel():
     ids = request.json['ids']
     claims_objs = get_new_by_ids(ids)
-    claims = [['Serial', 'Roll no','Name','Date','Class','Time','Event','Semester']]
+    claims = [['Serial', 'Roll no','Name','Date','Classes Missed','Time','Event','Semester']]
     for claim in claims_objs:
         c = [claim.user.serial,claim.user.roll_no,claim.user.name,claim.date,claim.period,'{} to {}'.format(get_12hr(claim.start_time),get_12hr(claim.end_time)),claim.event,claim.batch.semester]
         claims.append(c)
