@@ -158,7 +158,6 @@ function updateClasses (date, year, batch) {
   }
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
-      // TODO
       var dayClasses = JSON.parse(this.responseText);
       var dayClasses_length = dayClasses.length;
       var doc = document;
@@ -262,6 +261,13 @@ function sendReq () {
   var xmlhttp = new XMLHttpRequest();
   xmlhttp.open("POST", '/classdata');
   xmlhttp.setRequestHeader("Content-Type", "application/json");
+  xmlhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var lst = JSON.parse(this.responseText);
+      document.getElementById('download_link').href = "/download?ids=" + lst.join(',');
+      document.getElementById('download').style.display = "inline";
+    }
+  };
   xmlhttp.send(JSON.stringify(harvest()));
 };
 
@@ -329,7 +335,7 @@ document.getElementById('buttonTray_next').addEventListener('click', function ()
     }
   }*/
   sendReq();
-  //document.getElementById('buttonTray').parentNode.removeChild(document.getElementById('buttonTray'));
+  document.getElementById('buttonTray').parentNode.removeChild(document.getElementById('buttonTray'));
   document.getElementById('thankyou').className = "show";
 }, false);
 
