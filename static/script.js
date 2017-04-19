@@ -175,7 +175,7 @@ function updateClasses (date, year, batch) {
           txt = txt.replace('DEPT', dpt_txt);
         }
         else {
-          txt = txt.replace('DEPT', "<div>" + dayClasses[i].department + "</div>")
+          txt = txt.replace('DEPT', "<div>" + "Department of "+dayClasses[i].department + "</div>")
         }
         ele.innerHTML = txt;
         ele.querySelector('input[type=hidden]').value = JSON.stringify(dayClasses[i]);

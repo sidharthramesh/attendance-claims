@@ -8,6 +8,10 @@ body
 {
   color:#2C3E50;
 }
+select
+{
+  background: #EFEFEF
+}
 #viewport > div .tooltip
 {
   color:rgba(0,0,0,0.48);
