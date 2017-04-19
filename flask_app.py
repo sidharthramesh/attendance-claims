@@ -133,9 +133,12 @@ def view_all():
                     raise
         return jsonify({"status":"success"})
 
-@app.route('/download', methods = ['POST'])
+@app.route('/download', methods = ['GET'])
 def make_excel():
-    ids = request.json['ids']
+    #print(request.json)
+    ids = request.args.get('ids')
+    ids = ids.split(',')
+    app.logger.info(ids)
     claims_objs = get_new_by_ids(ids)
     claims = [['Serial', 'Roll no','Name','Date','Classes Missed','Time','Event','Semester']]
     for claim in claims_objs:
