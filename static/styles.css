@@ -14,17 +14,22 @@ body
 }
 .selected
 {
-  background:#57BC90;
+  background:#d6d8d7;
   color:black;
 }
 #classes_datedList > div
 {
-  color:white !important;
-  background:#A5A5AF !important;
+  color:black !important;
+  background:white !important;
 }
 #classes_selection_selection > div
 {
-  background:#CAEBF2;
+  background:#d6d8d7;
+}
+#buttonTray_next
+{
+  padding:10px;
+  text-align: center;
 }
 
 body
@@ -214,13 +219,14 @@ body
 {
   width:32px;
   vertical-align:top;
-  cursor:pointer;
 }
 #classes_datedList > div > div:nth-child(2) > img,
 #classes_selection_selection > div > div:nth-child(2) > img
 {
+  cursor:pointer;
   width:32px;
   height:32px;
+  outline:none;
 }
 #buttonTray > div
 {

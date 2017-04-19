@@ -77,6 +77,8 @@ def class_data():
             return jsonify(classes)
     if request.method == 'POST':
         data = request.json
+        if data['rollNumber'] == '':
+            return jsonify('empty roll no. Cannot process.')
         user = User.query.filter_by(roll_no=int(data['rollNumber'])).first()
         new_user = False
         if user == None:
@@ -95,7 +97,11 @@ def class_data():
             department = Department.query.filter_by(name = period['department']).first()
             batch = Batch.query.filter_by(name = data['year']+' Year Batch '+data['batch']).first()
             # add semester mapping from data['year']
-            claim_obj = Claim(period = period['name'],batch=batch, event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
+            if period['name'] in ['Postings','SDL']:
+                name = period['department']+ ' ' +period['name']
+            else:
+                name = period['name']
+            claim_obj = Claim(period = name ,batch=batch, event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
             #app.logger.info(str(claim_obj))
             try:
                 db.session.add(claim_obj)
@@ -138,13 +144,14 @@ def make_excel():
     #print(request.json)
     ids = request.args.get('ids')
     ids = ids.split(',')
+    ids = [int(id) for id in ids]
     app.logger.info(ids)
     claims_objs = get_new_by_ids(ids)
     claims = [['Serial', 'Roll no','Name','Date','Classes Missed','Time','Event','Semester']]
     for claim in claims_objs:
         c = [claim.user.serial,claim.user.roll_no,claim.user.name,claim.date,claim.period,'{} to {}'.format(get_12hr(claim.start_time),get_12hr(claim.end_time)),claim.event,claim.batch.semester]
         claims.append(c)
-    return excel.make_response_from_array(claims, "csv", file_name="Claims_on_{}".format(str(date.today())))
+    return excel.make_response_from_array(claims, file_type = "csv", file_name="Claims_on_{}".format(str(date.today())))
     #return render_template('table.html',claims = claims)
 @app.route('/login',methods = ['GET','POST'])
 def login():
