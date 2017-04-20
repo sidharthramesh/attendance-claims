@@ -15,6 +15,27 @@ from models import *
 from departments import depts, posting_depts
 all_depts = depts.splitlines()
 posting_depts = posting_depts.splitlines()
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
+def sendmail(user, attachment, event):
+    text = """Here are your claims in the format that was never meant for humans to type out themselves
+    Name: {name}
+    Roll no: {roll_no}
+    Event: {event}""".format(name = user.name, roll_no = user.roll_no, event = event)
+    msg = MIMEMultipart()
+    msg['Subject'] = 'Your Attendance Claims'
+    msg.attach(MIMEText(text))
+    part = MIMEApplication(attachment, Name = 'attachment.csv')
+    part['Content-Disposition'] = 'attachment; filename="attachment.csv"'
+    msg.attach(part)
+    mailer = smtplib.SMTP('smtp.gmail.com:587')
+    mailer.starttls()
+    mailer.login('stu.checks.mail','YouOweMe5bux')
+    mailer.sendmail('stu.checks.mail@gmail.com',user.email,msg.as_string())
+    mailer.close()
+    return
 
 def get_schedule(date,batch):
     day = dateutil.parser.parse(date).weekday()+1
@@ -54,8 +75,22 @@ def get_allnew():
         c = parse_claim(claim)
         claims.append(c)
     return claims
+def format_claims(ids):
+    claims_objs = get_new_by_ids(ids)
+    claims = [['Serial', 'Roll no','Name','Date','Classes Missed','Time','Event','Semester']]
+    for claim in claims_objs:
+        c = [claim.user.serial,claim.user.roll_no,claim.user.name,claim.date,claim.period,'{} to {}'.format(get_12hr(claim.start_time),get_12hr(claim.end_time)),claim.event,claim.batch.semester]
+        claims.append(c)
+    return claims
 def get_new_by_ids(ids):
     return Claim.query.filter(Claim.id.in_(ids), Claim.approval_js == 0).all()
+def array_to_csv(array):
+    rows = []
+    for row in array:
+        r = ','.join([str(element) for element in row])
+        rows.append(r)
+    return '\n'.join(rows)
+
 @app.route('/',methods = ['GET','POST'])
 def index():
     return render_template('index.html')
@@ -111,6 +146,7 @@ def class_data():
                 db.session.rollback()
                 return jsonify({"status":"failed"})
                 raise
+        sendmail(user,array_to_csv(format_claims(id_index)),data['event'])
         return jsonify(id_index)
         #return jsonify({"status":"success"})
 
@@ -139,6 +175,7 @@ def view_all():
                     raise
         return jsonify({"status":"success"})
 
+
 @app.route('/download', methods = ['GET'])
 def make_excel():
     #print(request.json)
@@ -146,11 +183,8 @@ def make_excel():
     ids = ids.split(',')
     ids = [int(id) for id in ids]
     app.logger.info(ids)
-    claims_objs = get_new_by_ids(ids)
-    claims = [['Serial', 'Roll no','Name','Date','Classes Missed','Time','Event','Semester']]
-    for claim in claims_objs:
-        c = [claim.user.serial,claim.user.roll_no,claim.user.name,claim.date,claim.period,'{} to {}'.format(get_12hr(claim.start_time),get_12hr(claim.end_time)),claim.event,claim.batch.semester]
-        claims.append(c)
+    claims = format_claims(ids)
+
     return excel.make_response_from_array(claims, file_type = "csv", file_name="Claims_on_{}".format(str(date.today())))
     #return render_template('table.html',claims = claims)
 @app.route('/login',methods = ['GET','POST'])
