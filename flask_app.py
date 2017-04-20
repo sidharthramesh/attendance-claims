@@ -19,6 +19,8 @@ from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 import smtplib
+from email.utils import formataddr
+from email.header import Header
 def sendmail(user, attachment, event):
     text = """Here are your claims in the format that was never meant for humans to type out themselves
     Name: {name}
@@ -26,9 +28,11 @@ def sendmail(user, attachment, event):
     Event: {event}""".format(name = user.name, roll_no = user.roll_no, event = event)
     msg = MIMEMultipart()
     msg['Subject'] = '{} Claims'.format(event)
+    msg['From'] = formataddr((str(Header('Your Mom', 'utf-8')), 'stu.checks.mail@gmail.com'))
     msg.attach(MIMEText(text))
-    part = MIMEApplication(attachment, Name = 'attachment.csv')
-    part['Content-Disposition'] = 'attachment; filename="attachment.csv"'
+    filename = '{}_claims.csv'.format(event.split(' ')[0].lower())
+    part = MIMEApplication(attachment, Name = filename)
+    part['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
     msg.attach(part)
     mailer = smtplib.SMTP('smtp.gmail.com:587')
     mailer.starttls()
