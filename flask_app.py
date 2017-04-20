@@ -25,7 +25,7 @@ def sendmail(user, attachment, event):
     Roll no: {roll_no}
     Event: {event}""".format(name = user.name, roll_no = user.roll_no, event = event)
     msg = MIMEMultipart()
-    msg['Subject'] = 'Your Attendance Claims'
+    msg['Subject'] = '{} Claims'.format(event)
     msg.attach(MIMEText(text))
     part = MIMEApplication(attachment, Name = 'attachment.csv')
     part['Content-Disposition'] = 'attachment; filename="attachment.csv"'
