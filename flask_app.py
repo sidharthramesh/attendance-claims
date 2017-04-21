@@ -22,13 +22,12 @@ import smtplib
 from email.utils import formataddr
 from email.header import Header
 def sendmail(user, attachment, event):
-    text = """Here are your claims in the format that was never meant for humans to type out themselves
-    Name: {name}
+    text = """Name: {name}
     Roll no: {roll_no}
     Event: {event}""".format(name = user.name, roll_no = user.roll_no, event = event)
     msg = MIMEMultipart()
     msg['Subject'] = '{} Claims'.format(event)
-    msg['From'] = formataddr((str(Header('Your Mom', 'utf-8')), 'stu.checks.mail@gmail.com'))
+    msg['From'] = formataddr((str(Header('Stu Claims', 'utf-8')), 'stu.checks.mail@gmail.com'))
     msg.attach(MIMEText(text))
     filename = '{}_claims.csv'.format(event.split(' ')[0].lower())
     part = MIMEApplication(attachment, Name = filename)
