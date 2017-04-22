@@ -73,10 +73,18 @@ def get_all():
         claims.append(c)
     return claims
 def get_allnew():
-    claims = []
-    for claim in Claim.query.filter(Claim.approval_js == 0).all():
-        c = parse_claim(claim)
-        claims.append(c)
+    new_claims = Claim.query.filter(Claim.approval_js==0)
+    all_events = [claim.event for claim in new_claims.group_by(Claim.event)]
+    claims = {}
+    for event in all_events:
+        eventdict = {}
+        eventclaims = new_claims.filter(Claim.event == event)
+        users = [claim.user for claim in eventclaims.group_by(Claim.user_id)]
+        for user in users:
+            userclaims = eventclaims.filter(Claim.user == user)
+            userclaims = parse_claims_list(userclaims)
+            eventdict[user.name] = userclaims
+        claims[event] = eventdict
     return claims
 def format_claims(ids):
     claims_objs = get_new_by_ids(ids)
@@ -159,11 +167,8 @@ def status_check():
 @app.route('/claims',methods = ['GET','POST'])
 def view_all():
     if request.method == 'GET':
-        f = request.args.get('filter')
-        if f == 'all':
-            return jsonify(get_all())
-        if f == 'new':
-            return jsonify(get_allnew())
+        return jsonify(get_allnew())
+
     if request.method == 'POST':
         data = request.json
         approved = get_new_by_ids(data['ids'])
