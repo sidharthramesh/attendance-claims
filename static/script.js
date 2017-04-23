@@ -215,6 +215,7 @@ function updateClasses (date, year, batch) {
   };
   xhttp.open("GET", "/classdata?date=" + date + "&batch=" + year + "+Year+Batch+" + batch, true);
   xhttp.send();
+  document.getElementById('classes_otherClasses').querySelector('h2 > span').innerHTML = date;
 }
 function addToSelectedClasses (node) {
   var selectedClass = node.querySelector('input[type=hidden]').value;
@@ -287,33 +288,6 @@ document.getElementById('classes_calendar_next').addEventListener('click', funct
   }
   setCalTo(mm, yyyy);
 }, false);
-document.getElementById('classes_calendar_today').addEventListener('click', function () {
-  var d = new Date();
-  var mm = d.getMonth();
-  var yyyy = d.getFullYear();
-  setCalTo(mm, yyyy);
-}, false);
-
-var eles = document.querySelectorAll('.radio');
-var eles_length = eles.length;
-for (var i = 0; i < eles_length; i++) {
-  var eles_divs = eles[i].querySelectorAll('div');
-  var eles_divs_length = eles_divs.length;
-  var flag = true;
-  for (var j = 0; j < eles_divs_length; j++) {
-    if (flag) {
-      eles_divs[j].parentNode.querySelector('input').value = eles_divs[j].textContent;
-      eles_divs[j].className = 'selected';
-      flag = false;
-    }
-    eles_divs[j].addEventListener('click', function () {
-      this.parentNode.querySelector('input').value = this.textContent;
-      this.parentNode.querySelector('.selected').className = '';
-      this.className = 'selected';
-      updateClasses(document.getElementById("classes_calendar_dates").querySelector("td.selected").querySelector("input[type=hidden]").value, document.getElementById('year_years_selection').value, document.getElementById('batch_batches_selection').value);
-    }, false);
-  }
-}
 document.getElementById('buttonTray_next').addEventListener('click', function () {
   /*var pages = [
     'name',
@@ -338,6 +312,27 @@ document.getElementById('buttonTray_next').addEventListener('click', function ()
   document.getElementById('buttonTray').parentNode.removeChild(document.getElementById('buttonTray'));
   document.getElementById('thankyou').className = "show";
 }, false);
+
+var eles = document.querySelectorAll('.radio');
+var eles_length = eles.length;
+for (var i = 0; i < eles_length; i++) {
+  var eles_divs = eles[i].querySelectorAll('div');
+  var eles_divs_length = eles_divs.length;
+  var flag = true;
+  for (var j = 0; j < eles_divs_length; j++) {
+    if (flag) {
+      eles_divs[j].parentNode.querySelector('input').value = eles_divs[j].textContent;
+      eles_divs[j].className = 'selected';
+      flag = false;
+    }
+    eles_divs[j].addEventListener('click', function () {
+      this.parentNode.querySelector('input').value = this.textContent;
+      this.parentNode.querySelector('.selected').className = '';
+      this.className = 'selected';
+      updateClasses(document.getElementById("classes_calendar_dates").querySelector("td.selected").querySelector("input[type=hidden]").value, document.getElementById('year_years_selection').value, document.getElementById('batch_batches_selection').value);
+    }, false);
+  }
+}
 
 var d = new Date();
 var mm = d.getMonth();

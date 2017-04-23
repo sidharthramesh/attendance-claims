@@ -95,6 +95,12 @@ ENV/
 
 # mkdocs documentation
 /site
+<<<<<<< HEAD
 
 app.db
 *.pyc
+=======
+app.db
+config.py
+*.pyc
+>>>>>>> origin/master
