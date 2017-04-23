@@ -98,3 +98,4 @@ ENV/
 app.db
 config.py
 *.pyc
+*.pyc

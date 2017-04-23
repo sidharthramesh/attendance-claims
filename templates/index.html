@@ -15,18 +15,22 @@
       <div id="name" class="show">
         <div class="tooltip">What's your name?</div>
         <input id="name_text" type="text"/>
+        <div id="name_validation" class="validation"></div>
       </div>
       <div id="email">
         <div class="tooltip">Enter your email address.</div>
         <input id="email_email" type="email"/>
+        <div id="email_validation" class="validation"></div>
       </div>
       <div id="number">
         <div class="tooltip">What's your roll number?</div>
         <input id="number_number" type="number"/>
+        <div id="number_validation" class="validation"></div>
       </div>
       <div id="serialNumber">
         <div class="tooltip">What's your Serial number?</div>
         <input id="serialNumber_number" type="number"/>
+        <div id="serialNumber_validation" class="validation"></div>
       </div>
       <div id="year">
         <div class="tooltip">Which year are you studying in?</div>
@@ -70,30 +74,17 @@
           </table>
         </div>
         <div id="classes_datedList"></div>
-        <div id="classes_otherClasses">
+        <div id="classes_otherClasses" class="noshow">
           <div>
-            <h2>Other Class on <span></span></h2>
+            <h2>Other</h2>
+            <div><span id="classes_otherClasses_date"></span></div>
             <div class="tooltip">What's the class?</div>
-            <input type="text"/>
-            <div id="classes_otherClasses_timetravel">
-              <div>
-                <div id="classes_otherClasses_timetravel_scrubs">
-                  <div id="classes_otherClasses_timetravel_scrubs_scrubStart"></div>
-                  <div id="classes_otherClasses_timetravel_scrubs_scrubEnd"></div>
-                </div>
-                <div id="classes_otherClasses_timetravel_line">
-                  <div id="classes_otherClasses_timetravel_line_inner">
-                    <div id="classes_otherClasses_timetravel_line_inner_inner"></div>
-                  </div>
-                </div>
-              </div>
-              <div>
-                <span>00:00am</span> - <span>00:00am</span>
-                <input type="hidden"/>
-              </div>
+            <input type="text" id="classes_otherClasses_name"/>
+            <div id="classes_otherClasses_time">
+              <input type="time" id="classes_otherClasses_startTime"/> to <input type="time" id="classes_otherClasses_endTime"/>
             </div>
             <div>
-              <select>
+              <select id="classes_otherClasses_depts">
                 <option>Select the department</option>
                 <option>Anatomy</option>
                 <option>Physiology</option>
@@ -116,19 +107,22 @@
                 <option>Neurology</option>
               </select>
             </div>
+            <div id="classes_otherClasses_validation" class="validation"></div>
           </div>
           <div>
-            <img/><input type="hidden"/>
+            <img id="classes_otherClasses_submit" src="{{url_for('static', filename = 'checkbox-unchecked.png')}}"/>
           </div>
         </div>
         <div id="classes_selection">
           <div class="tooltip">Selected Classes</div>
           <div id="classes_selection_selection"></div>
         </div>
+        <div id="classes_validation" class="validation"></div>
       </div>
       <div id="events">
         <div class="tooltip">Which event did you miss these classes for?</div>
         <input id="events_text" type="text"/>
+        <div id="events_validation" class="validation"></div>
       </div>
       <div id="thankyou">
         <div>
@@ -136,7 +130,6 @@
           <span id="download" style="display: none;">If you want to download this as an excel file, click <a id="download_link" href="">here</a></span>
         </div>
       </div>
-      <div id="validation"></div>
       <div id="buttonTray" class="show">
         <div id="buttonTray_next">Next</div>
       </div>

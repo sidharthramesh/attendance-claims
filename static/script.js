@@ -1,15 +1,5 @@
 var viewport = document.getElementById('viewport');
 var buttonTray = document.getElementById('buttonTray');
-function addCard (name) {
-  var doc = document;
-  var ele = doc.createElement('div');
-  switch (name) {
-    case 0:
-      ele.id = "introName";
-      ele.innerHTML = '<div class="tooltip">What\'s your name?</div><input id="introName_text" type="text"/>';
-      break;
-  }
-}
 
 function setCalTo (mm, yyyy) {
   var currMonthDeeds = getMonthDetails(mm, yyyy);
@@ -165,7 +155,7 @@ function updateClasses (date, year, batch) {
       container.innerHTML = "";
       for (var i = 0; i < dayClasses_length; i++) {
         var ele = doc.createElement('div');
-        var txt = '<div><h2>CLASS_NAME</h2><p>START_TIME - END_TIME</p><span>DATE</span><div>DEPT</div></div><div><img/><input type="hidden"/></div>';
+        var txt = '<div><h2>CLASS_NAME</h2><p>START_TIME - END_TIME</p><span>DATE</span><div>DEPT</div><div class="validation"></div></div><div><img src="/static/checkbox-unchecked.png"/><input type="hidden"/></div>';
         txt = txt.replace('CLASS_NAME', dayClasses[i].name);
         txt = txt.replace('START_TIME', dayClasses[i].start_time);
         txt = txt.replace('END_TIME', dayClasses[i].end_time);
@@ -175,7 +165,7 @@ function updateClasses (date, year, batch) {
           txt = txt.replace('DEPT', dpt_txt);
         }
         else {
-          txt = txt.replace('DEPT', "<div>" + "Department of "+dayClasses[i].department + "</div>")
+          txt = txt.replace('DEPT', "<div>" + "Department of " + dayClasses[i].department + "</div>")
         }
         ele.innerHTML = txt;
         ele.querySelector('input[type=hidden]').value = JSON.stringify(dayClasses[i]);
@@ -185,13 +175,13 @@ function updateClasses (date, year, batch) {
               if (this.parentNode.querySelector("select").value !== "Select the department") {
                 var dayClass = JSON.parse(this.parentNode.querySelector('input[type=hidden]').value);
                 if (dayClass.department.indexOf(this.parentNode.querySelector("select").value) > -1) {
-                  dayClass.department = this.parentNode.querySelector("select").value;
-                  this.parentNode.querySelector('input[type=hidden]').value = JSON.stringify(dayClass);
+                  this.parentNode.querySelector('.validation').innerHTML = "";
                   addToSelectedClasses(this.parentNode);
                 }
-                else {
-                  // FORM VALIDATION
-                }
+              }
+              else {
+                // FORM VALIDATION
+                this.parentNode.querySelector('.validation').innerHTML = "Please select the department.";
               }
             }
             else {
@@ -215,28 +205,37 @@ function updateClasses (date, year, batch) {
   };
   xhttp.open("GET", "/classdata?date=" + date + "&batch=" + year + "+Year+Batch+" + batch, true);
   xhttp.send();
-  document.getElementById('classes_otherClasses').querySelector('h2 > span').innerHTML = date;
+  document.getElementById('classes_otherClasses').className = "noshow";
+  document.getElementById('classes_otherClasses_date').innerHTML = date;
+  document.getElementById('classes_otherClasses_name').value = "";
+  document.getElementById('classes_otherClasses_startTime').value = "";
+  document.getElementById('classes_otherClasses_endTime').value = "";
+  document.getElementById('classes_otherClasses_depts').value = "Select the department";
+  document.getElementById('classes_otherClasses_validation').innerHTML = "";
 }
 function addToSelectedClasses (node) {
-  var selectedClass = node.querySelector('input[type=hidden]').value;
   var node_ = node.cloneNode(true);
   if (node.querySelector("select")) {
     var sel = node_.querySelector("select");
     sel.value = node.querySelector("select").value;
     sel.parentNode.innerHTML = "<div>" + sel.value + "</div>";
+    var selectedClass_ = JSON.parse(node_.querySelector('input[type=hidden]').value);
+    selectedClass_.department =  node.querySelector("select").value;
+    node_.querySelector('input[type=hidden]').value = JSON.stringify(selectedClass_);
   }
-  node_.querySelector('div:nth-child(2)').addEventListener('click', function () {
+  node_.querySelector('div:nth-child(2) > img').addEventListener('click', function () {
     var searchEles = document.getElementById('classes_datedList').childNodes;
     var searchEles_length = searchEles.length;
-    var this_ = JSON.parse(this.querySelector('input[type=hidden]').value);
+    var this_ = JSON.parse(this.parentNode.querySelector('input[type=hidden]').value);
     for (var i = 0; i < searchEles_length; i++) {
       searchEle = JSON.parse(searchEles[i].querySelector('input[type=hidden]').value);
       if (searchEle.id === this_.id && searchEle.date === this_.date) {
         searchEles[i].style.display = "table";
       }
     }
-    this.parentNode.parentNode.removeChild(this.parentNode);
+    this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);
   }, false);
+  node_.querySelector('div:nth-child(2) > img').src = "/static/checkbox-checked.png";
   document.getElementById('classes_selection_selection').appendChild(node_);
   node.style.display = "none";
 };
@@ -256,7 +255,44 @@ function harvest () {
   }
   details.selectedClasses = selected;
   details.event = "" + document.getElementById('events_text').value;
-  return details;
+  // validation
+  document.getElementById('name_validation').innerHTML = "";
+  document.getElementById('email_validation').innerHTML = "";
+  document.getElementById('number_validation').innerHTML = "";
+  document.getElementById('serialNumber_validation').innerHTML = "";
+  document.getElementById('classes_validation').innerHTML = ""
+  document.getElementById('events_validation').innerHTML = "";
+  var flag = true;
+  if (!(/^\w[\w\s!]*/.test(details.name))) {
+    flag = false;
+    document.getElementById('name_validation').innerHTML = "Invalid Name.";
+  }
+  if (!(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(details.email))) {
+    flag = false;
+    document.getElementById('email_validation').innerHTML = "Invalid Email.";
+  }
+  if (!(/^\d{9,}/.test(details.rollNumber))) {
+    flag = false;
+    document.getElementById('number_validation').innerHTML = "Invalid Roll Number.";
+  }
+  if (!(/^\d+/.test(details.serialNumber))) {
+    flag = false;
+    document.getElementById('serialNumber_validation').innerHTML = "Invalid Serial Number.";
+  }
+  if (details.selectedClasses.length === 0) {
+    flag = false;
+    document.getElementById('classes_validation').innerHTML = "Please select the classes you have missed."
+  }
+  if (!(/^\w[\w\s]*/.test(details.event))) {
+    flag = false;
+    document.getElementById('events_validation').innerHTML = "Invalid Event Name.";
+  }
+  if (flag === true) {
+    return details;
+  }
+  else {
+    return false;
+  }
 };
 function sendReq () {
   var xmlhttp = new XMLHttpRequest();
@@ -269,7 +305,13 @@ function sendReq () {
       document.getElementById('download').style.display = "inline";
     }
   };
-  xmlhttp.send(JSON.stringify(harvest()));
+  if (harvest()) {
+    xmlhttp.send(JSON.stringify(harvest()));
+    return true;
+  }
+  else {
+    return false;
+  }
 };
 
 document.getElementById('classes_calendar_prev').addEventListener('click', function () {
@@ -308,9 +350,116 @@ document.getElementById('buttonTray_next').addEventListener('click', function ()
       return false;
     }
   }*/
-  sendReq();
-  document.getElementById('buttonTray').parentNode.removeChild(document.getElementById('buttonTray'));
-  document.getElementById('thankyou').className = "show";
+  if (sendReq() !== false) {
+    document.getElementById('buttonTray').parentNode.removeChild(document.getElementById('buttonTray'));
+    document.getElementById('thankyou').className = "show";
+  }
+}, false);
+document.getElementById('classes_otherClasses').addEventListener('click', function () {
+  if (this.className === 'noshow') {
+    this.className = "";
+  }
+}, false);
+document.getElementById('classes_otherClasses_submit').addEventListener('click', function () {
+  // collect
+  var name = document.getElementById('classes_otherClasses_name').value;
+  var startTime = document.getElementById('classes_otherClasses_startTime').value;
+  var endTime = document.getElementById('classes_otherClasses_endTime').value;
+  var dept = document.getElementById('classes_otherClasses_depts').value;
+  var date = document.getElementById('classes_otherClasses_date').textContent;
+  // validate
+  var flag = true;
+  if (!(/^\w[\s\w\/]*$/.test(name))) {
+    flag = false;
+    document.getElementById('classes_otherClasses_validation').innerHTML = "Please check the name of the class.";
+  }
+  if (!(/^\d\d\:\d\d$/.test(startTime))) {
+    flag = false;
+    document.getElementById('classes_otherClasses_validation').innerHTML = "Please check the start time.";
+  }
+  else {
+    var matches = /^(\d\d)\:(\d\d)$/.exec(startTime);
+    var hours = Number(matches[1]);
+    var minutes = Number(matches[2]);
+    var meridian = "";
+    if (hours > 12) {
+      meridian = "PM";
+      hours -= 12;
+    }
+    else {
+      meridian = "AM";
+    }
+    if (hours == 0) {
+      hours = 12;
+    }
+    if (hours < 10) {
+      hours = "0" + hours;
+    }
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    }
+    startTime = "" + hours + ":" + minutes + " " + meridian;
+  }
+  if (!(/^\d\d\:\d\d$/.test(endTime))) {
+    flag = false;
+    document.getElementById('classes_otherClasses_validation').innerHTML = "Please check the end time.";
+  }
+  else {
+    var matches = /^(\d\d)\:(\d\d)$/.exec(endTime);
+    var hours = Number(matches[1]);
+    var minutes = Number(matches[2]);
+    var meridian = "";
+    if (hours > 12) {
+      meridian = "PM";
+      hours -= 12;
+    }
+    else {
+      meridian = "AM";
+    }
+    if (hours == 0) {
+      hours = 12;
+    }
+    if (hours < 10) {
+      hours = "0" + hours;
+    }
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    }
+    endTime = "" + hours + ":" + minutes + " " + meridian;
+  }
+  if (dept === "Select the department") {
+    flag = false;
+    document.getElementById('classes_otherClasses_validation').innerHTML = "Please select a department.";
+  }
+  if (flag) {
+    // create a node
+    var ele = document.createElement('div');
+    var innerHTML_txt = '<div><h2>CLASS_NAME</h2><p>START_TIME - END_TIME</p><span>DATE</span><div>DEPT</div></div><div><img src="/static/checkbox-checked.png"/><input type="hidden"/></div>';
+    innerHTML_txt =  innerHTML_txt.replace('CLASS_NAME', name);
+    innerHTML_txt =  innerHTML_txt.replace('START_TIME', startTime);
+    innerHTML_txt = innerHTML_txt.replace('END_TIME', endTime);
+    innerHTML_txt = innerHTML_txt.replace('DATE', date);
+    innerHTML_txt = innerHTML_txt.replace('DEPT', dept);
+    ele.innerHTML = innerHTML_txt;
+    ele.querySelector('input[type=hidden]').value = JSON.stringify({
+      date: date,
+      name: name,
+      start_time: startTime,
+      end_time: endTime,
+      department: dept
+    });
+    ele.querySelector('img').addEventListener('click', function () {
+      this.parentNode.parentNode.parentNode.removeChild(this.parentNode.parentNode);
+    }, false);
+    // append to selectedClasses
+    document.getElementById('classes_selection_selection').appendChild(ele);
+    // clear values
+    document.getElementById('classes_otherClasses_name').value = "";
+    document.getElementById('classes_otherClasses_startTime').value = "";
+    document.getElementById('classes_otherClasses_endTime').value = "";
+    document.getElementById('classes_otherClasses_depts').value = "Select the department";
+    document.getElementById('classes_otherClasses_validation').innerHTML = "";
+  }
 }, false);
 
 var eles = document.querySelectorAll('.radio');
