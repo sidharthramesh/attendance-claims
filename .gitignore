@@ -95,3 +95,6 @@ ENV/
 
 # mkdocs documentation
 /site
+
+app.db
+*.pyc
