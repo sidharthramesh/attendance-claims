@@ -35,3 +35,12 @@ Response:<br>{<br>
   "8 AM to 9 AM": "Surgery",<br>
   "9:30 AM to 12 Noon": "Postings"<br>
 }
+## Todo
+---
+# Frontend
+* List UI for Joint sec, office, departments
+* Select all button for classes
+* Login Page
+
+# Backend
+* Login Authentication 
