@@ -1,6 +1,6 @@
-from flask import request, Flask, render_template,jsonify, redirect, url_for
+from flask import request, Flask, render_template,jsonify, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
-import dateutil.parser
+import dateutil.parser, os
 from config import SQLALCHEMY_DATABASE_URI
 from flask_migrate import Migrate
 import flask_excel as excel
@@ -9,6 +9,7 @@ app = Flask(__name__,static_url_path='/static')
 app.config["DEBUG"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
+app.secret_key = os.urandom(12)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 from models import *
@@ -21,10 +22,11 @@ from email.mime.text import MIMEText
 import smtplib
 from email.utils import formataddr
 from email.header import Header
+
 def sendmail(user, attachment, event):
     link= 'https://www.youtube.com/watch?v=CMNry4PE93Y'
     link_text= 'Just Click'
-    text = """Hey yo {name}. This be the confirmation that we've recieved your claims. We've attached the excel file with this mail.\nCheck if you've sent the correct details or keep it as a souvenir. \n\nHave an awesome day! \nMade for u by Stu (Simplyfying Things For You)\n¯\_(ツ)_/¯""".format(name = user.name,)
+    text = """Hey yo {name}. This be the confirmation that we've recieved your claims. We've attached the excel file with this mail.\nCheck if you've sent the correct details or keep it as a souvenir. \n\nHave an awesome day! \nMade for u by Stu (Simplyfying Things For You)\n\n¯\_(ツ)_/¯""".format(name = user.name,)
     msg = MIMEMultipart()
     msg['Subject'] = '{} Claims'.format(event)
     msg['From'] = formataddr((str(Header('Simplified Claims', 'utf-8')), 'stu.checks.mail@gmail.com'))
@@ -64,17 +66,13 @@ def parse_claim(claim):
     c['Name'] = claim.user.name
     c['Period'] = claim.period
     c['Time'] = "{} to {}".format(get_12hr(claim.start_time),get_12hr(claim.end_time))
+    c['status'] = claim.approval_js + claim.approval_office +claim.approval_dept
     return c
 def parse_claims_list(claims):
     return [parse_claim(claim) for claim in claims]
-def get_all():
-    claims = []
-    for claim in Claim.query.all():
-        c = parse_claim(claim)
-        claims.append(c)
-    return claims
-def get_allnew():
-    new_claims = Claim.query.filter(Claim.approval_js==0)
+def get_allclaims(fil = True):
+    """formatter claims object to sand as json"""
+    new_claims = Claim.query.filter(fil)
     all_events = [claim.event for claim in new_claims.group_by(Claim.event)]
     claims = {}
     for event in all_events:
@@ -96,13 +94,49 @@ def format_claims(ids):
     return claims
 def get_new_by_ids(ids):
     return Claim.query.filter(Claim.id.in_(ids), Claim.approval_js == 0).all()
+def get_jsapproved_by_ids(ids):
+    return Claim.query.filter(Claim.id.in_(ids), Claim.approval_js == 1).all()
 def array_to_csv(array):
     rows = []
     for row in array:
         r = ','.join([str(element) for element in row])
         rows.append(r)
     return '\n'.join(rows)
+def js_approve(ids):
+    approved = get_new_by_ids(ids)
+    app.logger.info(approved)
+    for claim in approved:
+        claim.approval_js = 1
+        print('JS Approved {}'.format(claim))
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            return jsonify({"status":"failed"})
+            raise
+    return jsonify({"status":"success. js approved for {}".format(str(ids))})
+def disapprove(ids):
+    dissapproved = Claim.query.filter(Claim.id.in_(ids)).all()
+    for claim in dissapproved:
+        try:
+            db.session.delete(claim)
+            db.session.commit()
+        except:
+            db.session.rollback()
+            return jsonify({"status":"failed"})
+    return jsonify({"status":"success :( disapproved for {}".format(str(ids))})
 
+def office_approve(ids):
+    approved = get_jsapproved_by_ids(ids)
+    for claim in approved:
+        claim.approval_office = 1
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            return jsonify({"status":"failed"})
+            raise
+    return jsonify({"status":"success. office approved for {}".format(str(ids))})
 @app.route('/',methods = ['GET','POST'])
 def index():
     return render_template('index.html')
@@ -162,29 +196,51 @@ def class_data():
         return jsonify(id_index)
         #return jsonify({"status":"success"})
 
-@app.route('/status_check',methods = ['GET','POST'])
-def status_check():
-    pass
+
 @app.route('/claims',methods = ['GET','POST'])
 def view_all():
-    if request.method == 'GET':
-        return jsonify(get_allnew())
+    user = session.get('user')
+    if user == 'admin':
+        #app.logger.info('Admin Logged in!')
+        if request.method == 'GET':
+            if request.args.get('filter') == 'all':
+                return jsonify(get_allclaims())
+            if request.args.get('filter') == 'approved':
+                return jsonify(get_allclaims(Claim.approval_js == 1))
+            else:
+                return jsonify(get_allclaims(Claim.approval_js == 0))
 
-    if request.method == 'POST':
-        data = request.json
-        approved = get_new_by_ids(data['ids'])
-        if data['auth'] == 'secret_password123':
-            for claim in approved:
-                claim.approval_js = 1
-                try:
-                    db.session.commit()
-                except:
-                    db.session.rollback()
-                    return jsonify({"status":"failed"})
-                    raise
-        return jsonify({"status":"success"})
+        if request.method == 'POST':
+            app.logger.info('Got POST')
+            data = request.json
+            action = data['action']
+            if action == 'approve':
+                app.logger.info(data['ids'])
+                return js_approve(data['ids'])
+            if action == 'disaprove':
+                return disapprove(data['ids'])
+    elif user == 'office':
+        if request.method == 'GET':
+            if request.args.get('filter') == 'all':
+                return jsonify(get_allclaims())
+            if request.args.get('filter') == 'approved':
+                return jsonify(get_allclaims(Claim.approval_office == 1,Claim.approval_js==1))
+            else:
+                return jsonify(get_allclaims(Claim.approval_js == 1))
 
-
+        if request.method == 'POST':
+            data = request.json
+            action = data['action']
+            if action == 'approve':
+                return office_approve(data['ids'])
+            if action == 'disaprove':
+                return disapprove(data['ids'])
+    else:
+        return "Not allowed yet. <a href='/login'>Login please.</a>"
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/login')
 @app.route('/download', methods = ['GET'])
 def make_excel():
     #print(request.json)
@@ -198,7 +254,18 @@ def make_excel():
     #return render_template('table.html',claims = claims)
 @app.route('/login',methods = ['GET','POST'])
 def login():
-    return "Login page work in progress"
+    if request.method == 'GET':
+        return render_template('login.html')
+    if request.method == 'POST':
+        if request.form['password'] == 'admin' and request.form['username'] == 'admin':
+            session['user'] = 'admin'
+            return redirect('/claims')
+        if request.form['password'] == 'office' and request.form['username'] == 'office':
+            session['user'] = 'office'
+            return redirect('/claims')
+        else:
+            return 'not admin or office!'
+
 @app.errorhandler(404)
 def page_not_found(e):
     """Return a custom 404 error."""
