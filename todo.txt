@@ -1,0 +1,7 @@
+# Frontend
+* List UI for Joint sec, office, departments
+* Select all button for classes
+* Login Page
+
+# Backend
+* Login Authentication 
