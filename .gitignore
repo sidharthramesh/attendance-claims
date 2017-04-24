@@ -100,3 +100,4 @@ config.py
 *.pyc
 *.pyc
 __pycache__/models.cpython-36.pyc
+config.py
