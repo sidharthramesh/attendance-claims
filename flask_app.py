@@ -22,13 +22,14 @@ import smtplib
 from email.utils import formataddr
 from email.header import Header
 def sendmail(user, attachment, event):
-    text = """Name: {name}
-    Roll no: {roll_no}
-    Event: {event}""".format(name = user.name, roll_no = user.roll_no, event = event)
+    link= 'https://www.youtube.com/watch?v=CMNry4PE93Y'
+    link_text= 'Just Click'
+    text = """Hey yo {name}. This be the confirmation that we've recieved your claims. We've attached the excel file with this mail.\nCheck if you've sent the correct details or keep it as a souvenir. \n\nHave an awesome day! \nMade for u by Stu (Simplyfying Things For You)\n¯\_(ツ)_/¯""".format(name = user.name,)
     msg = MIMEMultipart()
     msg['Subject'] = '{} Claims'.format(event)
-    msg['From'] = formataddr((str(Header('Stu Claims', 'utf-8')), 'stu.checks.mail@gmail.com'))
+    msg['From'] = formataddr((str(Header('Simplified Claims', 'utf-8')), 'stu.checks.mail@gmail.com'))
     msg.attach(MIMEText(text))
+    msg.attach(MIMEText(u'<a href="{link}">{link_text}</a>'.format(link=link,link_text=link_text),'html'))
     filename = '{}_claims.csv'.format(event.split(' ')[0].lower())
     part = MIMEApplication(attachment, Name = filename)
     part['Content-Disposition'] = 'attachment; filename="{}"'.format(filename)
@@ -143,7 +144,7 @@ def class_data():
             department = Department.query.filter_by(name = period['department']).first()
             batch = Batch.query.filter_by(name = data['year']+' Year Batch '+data['batch']).first()
             # add semester mapping from data['year']
-            if period['name'] in ['Postings','SDL']:
+            if not any([dept in period['name'] for dept in all_depts]):
                 name = period['department']+ ' ' +period['name']
             else:
                 name = period['name']

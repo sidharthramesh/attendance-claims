@@ -41,6 +41,7 @@ Response:<br>{<br>
 * List UI for Joint sec, office, departments
 * Select all button for classes
 * Login Page
+* Fix time AM/PM
 
 # Backend
-* Login Authentication 
+* Login Authentication
