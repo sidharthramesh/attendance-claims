@@ -67,12 +67,14 @@ def parse_claim(claim):
     c['Period'] = claim.period
     c['Time'] = "{} to {}".format(get_12hr(claim.start_time),get_12hr(claim.end_time))
     c['status'] = claim.approval_js + claim.approval_office +claim.approval_dept
+    c['dissapproved'] = claim.dissapprove
     return c
 def parse_claims_list(claims):
     return [parse_claim(claim) for claim in claims]
-def get_allclaims(fil = True):
+def get_allclaims(*fil):
     """formatter claims object to sand as json"""
-    new_claims = Claim.query.filter(fil)
+    non_disapproved = Claim.query.filter(Claim.dissapprove == 0)
+    new_claims = non_disapproved.filter(*(fil))
     all_events = [claim.event for claim in new_claims.group_by(Claim.event)]
     claims = {}
     for event in all_events:
@@ -118,8 +120,8 @@ def js_approve(ids):
 def disapprove(ids):
     dissapproved = Claim.query.filter(Claim.id.in_(ids)).all()
     for claim in dissapproved:
+        claim.dissapprove = 1
         try:
-            db.session.delete(claim)
             db.session.commit()
         except:
             db.session.rollback()
@@ -137,6 +139,34 @@ def office_approve(ids):
             return jsonify({"status":"failed"})
             raise
     return jsonify({"status":"success. office approved for {}".format(str(ids))})
+def department_approve(ids):
+    approved = get_jsapproved_by_ids(ids)
+    for claim in approved:
+        claim.approval_dept = 1
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+            return jsonify({"status":"failed"})
+            raise
+    return jsonify({"status":"success. office approved for {}".format(str(ids))})
+def department_validate(username,password):
+    result = Department.query.filter(Department.username == username).first()
+    if result:
+        if result.password == password:
+            return result
+    return None
+def student_validate(username,password):
+    result = User.query.filter(User.roll_no == username).first()
+    if result:
+        return result
+    return None
+def special_validate(username,password):
+    result = Special.query.filter(Special.username == username).first()
+    if result:
+        if result.password == password:
+            return result.name
+    return None
 @app.route('/',methods = ['GET','POST'])
 def index():
     return render_template('index.html')
@@ -182,7 +212,7 @@ def class_data():
                 name = period['department']+ ' ' +period['name']
             else:
                 name = period['name']
-            claim_obj = Claim(period = name ,batch=batch, event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
+            claim_obj = Claim(dissapprove = 0, period = name ,batch=batch, event = data['event'], user = user, date = get_date(period['date']), start_time=get_time(period['start_time']), end_time = get_time(period['end_time']),department = department, approval_js =0,approval_office =0, approval_dept = 0)
             #app.logger.info(str(claim_obj))
             try:
                 db.session.add(claim_obj)
@@ -198,10 +228,10 @@ def class_data():
 
 
 @app.route('/claims',methods = ['GET','POST'])
-def view_all():
+def dashboard():
     user = session.get('user')
-    if user == 'admin':
-        #app.logger.info('Admin Logged in!')
+    if user == 'jointsec':
+        #app.logger.info('Jointsec Logged in!')
         if request.method == 'GET':
             if request.args.get('filter') == 'all':
                 return jsonify(get_allclaims())
@@ -224,9 +254,9 @@ def view_all():
             if request.args.get('filter') == 'all':
                 return jsonify(get_allclaims())
             if request.args.get('filter') == 'approved':
-                return jsonify(get_allclaims(Claim.approval_office == 1,Claim.approval_js==1))
+                return jsonify(get_allclaims(Claim.approval_office == 1))
             else:
-                return jsonify(get_allclaims(Claim.approval_js == 1))
+                return jsonify(get_allclaims(Claim.approval_js == 1,Claim.approval_office==0))
 
         if request.method == 'POST':
             data = request.json
@@ -235,8 +265,38 @@ def view_all():
                 return office_approve(data['ids'])
             if action == 'disaprove':
                 return disapprove(data['ids'])
+    elif user:
+        dep = Department.query.get(user)
+        non_disapproved = dep.query.filter(Claim.dissapprove == 0)
+        if request.method == 'GET':
+            if request.args.get('filter') == 'all':
+                claims_list = non_disapproved.filter(Claim.approval_office==1).all()
+                parsed = parse_claims_list(claims_list)
+                return jsonify(parsed)
+            if request.args.get('filter') == 'approved':
+                claims_list = non_disapproved.filter(Claim.approval_dept==1).all()
+                parsed = parse_claims_list(claims_list)
+                return jsonify(parsed)
+            else:
+                claims_list = non_disapproved.filter(Claim.approval_office==1,Claim.approval_dept==0).all()
+                parsed = parse_claims_list(claims_list)
+                return jsonify(parsed)
+        if request.method == 'POST':
+            data = request.json
+            action = data['action']
+            if action == 'approve':
+                return department_approve(data['ids'])
+            if action == 'disaprove':
+                return disapprove(data['ids'])
+    elif session.get('student'):
+        student = User.query.get(session.get('student'))
+        if request.method == 'GET':
+            claims = student.claims.all()
+            return jsonify(parse_claims_list(claims))
+        if request.method == 'POST':
+            return "Students can't post bitch!"
     else:
-        return "Not allowed yet. <a href='/login'>Login please.</a>"
+        return 'Invalid login'
 @app.route('/logout')
 def logout():
     session.clear()
@@ -254,18 +314,25 @@ def make_excel():
     #return render_template('table.html',claims = claims)
 @app.route('/login',methods = ['GET','POST'])
 def login():
+    if session.get('user'):
+        return redirect('/claims')
     if request.method == 'GET':
         return render_template('login.html')
     if request.method == 'POST':
-        if request.form['password'] == 'admin' and request.form['username'] == 'admin':
-            session['user'] = 'admin'
+        if special_validate(request.form['username'],request.form['password']):
+            user = special_validate(request.form['username'],request.form['password'])
+            session['user'] = user
             return redirect('/claims')
-        if request.form['password'] == 'office' and request.form['username'] == 'office':
-            session['user'] = 'office'
+        if department_validate(request.form['username'],request.form['password']):
+            department = department_validate(request.form['username'],request.form['password'])
+            session['user'] = department.id
+            return redirect('/claims')
+        if student_validate(request.form['username'],request.form['password']):
+            student = student_validate(request.form['username'],request.form['password'])
+            session['student'] = student.id
             return redirect('/claims')
         else:
-            return 'not admin or office!'
-
+            return 'wrong credentials'
 @app.errorhandler(404)
 def page_not_found(e):
     """Return a custom 404 error."""

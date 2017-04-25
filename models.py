@@ -10,6 +10,14 @@ class Department(db.Model):
     def __repr__(self):
         return "<department {}>".format(self.name)
 
+class Special(db.Model):
+    id = db.Column(db.Integer,primary_key=True)
+    name = db.Column(db.String(40))
+    username = db.Column(db.String(40))
+    password = db.Column(db.String(40))
+    def __repr__(self):
+        return "<{}>".format(self.name)
+
 class Period(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     batch_id = db.Column(db.Integer, db.ForeignKey('batch.id'))
@@ -42,6 +50,7 @@ class Claim(db.Model):
     approval_js = db.Column(db.Integer, default = 0)
     approval_office = db.Column(db.Integer, default = 0)
     approval_dept = db.Column(db.Integer, default = 0)
+    dissapprove = db.Column(db.Integer, default = 0)
     batch_id = db.Column(db.Integer,db.ForeignKey('batch.id'))
     def __repr__(self):
         approval_status = self.approval_js + self.approval_office +self.approval_dept

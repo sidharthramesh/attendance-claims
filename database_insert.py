@@ -35,8 +35,13 @@ for dep in depts:
     db.session.add(obj)
 db.session.commit()
 
-Department.query.all()
-
+for user in ['jointsec1','jointsec2']:
+    obj = Special(name = 'jointsec', username = user,password = user+str(123))
+    db.session.add(obj)
+db.session.commit()
+obj = Special(name = 'office', username = 'office' ,password = 'office'+str(123))
+db.session.add(obj)
+db.session.commit()
 for batch,table in timetables.items():
     batch_obj = Batch(name = batch, semester = int(sem_index[batch]))
     db.session.add(batch_obj)
