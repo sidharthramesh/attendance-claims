@@ -170,6 +170,9 @@ def special_validate(username,password):
 @app.route('/',methods = ['GET','POST'])
 def index():
     return render_template('index.html')
+@app.route('/list')
+def list():
+    return render_template('list.html')
 @app.route('/classdata',methods = ['GET','POST'])
 def class_data():
     """Request class data with params date=(2017-12-31) and batch=batch_a"""
