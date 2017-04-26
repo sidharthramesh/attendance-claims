@@ -9,14 +9,45 @@
     <div id="viewport">
       <div class="show">
         <h1>Attendance Claims</h1>
-        <p>All the claims that have been submitted and await your approval are listed below.</p>
+        <p>
+          All the claims that have been submitted and are awaiting <!-- if statement here --> your <!-- endif -->approval are listed below.<br/>
+        </p>
       </div>
       <div id="claims" class="show">
-        
+        <div class="first">
+          <h2>Student Name</h2>
+          <div class="info">
+            Key: Value<br/>
+            Key: Value<br/>
+            Key: Value
+          </div>
+          <div class="second">
+            <h3>Event Name</h3>
+            <div class="info">
+              Key: Value<br/>
+              Key: Value<br/>
+              Key: Value
+            </div>
+            <div class="third"></div>
+          </div>
+        </div>
+      </div>
+      <div id="buttonTray" class="show">
+        <!-- Inject the snippet.html here -->
+        {%if admin%}
+        <div id="buttonTray_approve">Approve</div>
+        <!-- Else inject this -->
+        <div id="buttonTray_logout">Logout</div>
+        <div id="buttonTray_disapprove">Disapprove</div>
+        <script>
+function parse (claims) {};
+        </script>
+        {%else%}
+        <div id="buttonTray_logout">Logout</div>
+        {%endif%}
       </div>
     </div>
-    <div id="buttonTray">
 
-    </div>
+    <script src="{{url_for('static',filename = 'script_list.js')}}"></script>
   </body>
 </html>

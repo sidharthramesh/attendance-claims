@@ -22,7 +22,8 @@ select
   color:black;
 }
 #classes_datedList > div,
-#classes_otherClasses
+#classes_otherClasses,
+#claims > .first > div.second
 {
   color:black !important;
   background:white !important;
@@ -30,11 +31,6 @@ select
 #classes_selection_selection > div
 {
   background:#d6d8d7;
-}
-#buttonTray_next
-{
-  padding:10px;
-  text-align: center;
 }
 #classes_otherClasses_timetravel_line_inner
 {
@@ -117,14 +113,18 @@ body
 }
 #buttonTray
 {
+  width:calc(100% - 32px);
   font-size:0px;
+  display:table !important;
 }
 #buttonTray > div
 {
-  width:100%;
+  width:calc(100% - 16px);
   height:32px;
+  padding:8px;
   font-size:16px;
-  display:inline-block;
+  text-align: center;
+  display:table-cell;
 }
 #buttonTray > div:hover
 {
@@ -291,16 +291,36 @@ body
 {
   margin-top:8px;
 }
-#claims > div
+#claims > .first
 {
   padding:8px;
-  margin:8px;
-  border-top:2px solid rgba(0,0,0,0.48);
 }
-#claims > div:last-child
+#claims > .first > h2
 {
-  border-bottom: 2px solid rgba(0,0,0,0.48);
+  margin:0px;
 }
+#claims > .first > div.info
+{
+  padding:8px;
+}
+#claims > .first > div.second
+{
+  padding:8px;
+  margin-bottom:8px;
+}
+#claims > .first > div.second:last-child
+{
+  margin:0px;
+}
+#claims > .first > div.second > h3
+{
+  margin:0px;
+}
+#claims > .first > div.second > .info
+{
+  padding:8px;
+}
+
 #buttonTray > div
 {
   cursor:pointer;
