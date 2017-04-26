@@ -62,7 +62,7 @@ def parse_claim(claim):
     c['Event'] = claim.event
     c['Date'] = claim.date
     c['Serial'] = claim.user.serial
-    c['Roll no'] = claim.user.roll_no
+    c['Roll_no'] = claim.user.roll_no
     c['Name'] = claim.user.name
     c['Period'] = claim.period
     c['Time'] = "{} to {}".format(get_12hr(claim.start_time),get_12hr(claim.end_time))
