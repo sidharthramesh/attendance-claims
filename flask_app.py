@@ -1,4 +1,4 @@
-from flask import request, Flask, render_template,jsonify, redirect, url_for, session
+from flask import request, Flask, render_template,jsonify, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 import dateutil.parser, os
 from config import SQLALCHEMY_DATABASE_URI
@@ -301,7 +301,7 @@ def claims_api():
     else:
         return 'Invalid login'
 @app.route('/dashboard', methods = ['GET','POST'])
-def dashboard:
+def dashboard():
     if session.get('student'):
         return render_template('list.html',admin = False)
     if session.get('user'):
@@ -327,7 +327,7 @@ def make_excel():
 @app.route('/login',methods = ['GET','POST'])
 def login():
     if session.get('user'):
-        return redirect('/claims')
+        return redirect('/dashboard')
     if request.method == 'GET':
         return render_template('login.html')
     if request.method == 'POST':
@@ -335,17 +335,18 @@ def login():
             user = special_validate(request.form['username'],request.form['password'])
             session['user'] = user
             app.logger.info(user)
-            return redirect('/claims')
+            return redirect('/dashboard')
         if department_validate(request.form['username'],request.form['password']):
             department = department_validate(request.form['username'],request.form['password'])
             session['user'] = department.id
-            return redirect('/claims')
+            return redirect('/dashboard')
         if student_validate(request.form['username'],request.form['password']):
             student = student_validate(request.form['username'],request.form['password'])
             session['student'] = student.id
-            return redirect('/claims')
+            return redirect('/dashboard')
         else:
-            return 'wrong credentials'
+            flash('Wrong Credentials')
+            return redirect('/login')
 @app.errorhandler(404)
 def page_not_found(e):
     """Return a custom 404 error."""

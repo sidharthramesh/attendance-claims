@@ -1,10 +1,9 @@
 <link rel="stylesheet" href="/static/loginstyle.css" type="text/css">
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 {% block body %}
-{% if session['logged_in'] %}
+{% if session.get('user') or session.get('student') %}
 <p>You're logged in already!</p>
 {% else %}
-
-
 <form action="/login" method="POST">
 	<div class="login">
 		<div class="login-screen">
@@ -25,8 +24,19 @@
 
                 <input type="submit" value="Log in" class="btn btn-primary btn-large btn-block" >
 			    <br>
+
 			</div>
+			{% with messages = get_flashed_messages() %}
+	{% if messages %}
+	<ul class=flashes>
+	{% for message in messages %}
+	<div class=error><strong>Error:</strong> {{ message }}</div>
+	{% endfor %}
+	</ul>
+	{% endif %}
+	{% endwith %}
 		</div>
+
 	</div>
 </form>
 
