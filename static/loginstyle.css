@@ -48,7 +48,11 @@ input:focus {
 border: 2px solid #EFEFEF;
 box-shadow: none;
 }
+.error {
+	color: red;
+	text-align: center;
 
+}
 .btn {
   border: 2px solid transparent;
   background: #2C3E50;

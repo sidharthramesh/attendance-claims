@@ -1,4 +1,4 @@
-from flask import request, Flask, render_template,jsonify, redirect, url_for, session
+from flask import request, Flask, render_template,jsonify, redirect, url_for, session, flash
 from flask_sqlalchemy import SQLAlchemy
 import dateutil.parser, os
 from config import SQLALCHEMY_DATABASE_URI
@@ -62,7 +62,7 @@ def parse_claim(claim):
     c['Event'] = claim.event
     c['Date'] = claim.date
     c['Serial'] = claim.user.serial
-    c['Roll no'] = claim.user.roll_no
+    c['Roll_no'] = claim.user.roll_no
     c['Name'] = claim.user.name
     c['Period'] = claim.period
     c['Time'] = "{} to {}".format(get_12hr(claim.start_time),get_12hr(claim.end_time))
@@ -231,7 +231,7 @@ def class_data():
 
 
 @app.route('/claims',methods = ['GET','POST'])
-def dashboard():
+def claims_api():
     user = session.get('user')
     if user == 'jointsec':
         #app.logger.info('Jointsec Logged in!')
@@ -300,6 +300,15 @@ def dashboard():
             return "Students can't post bitch!"
     else:
         return 'Invalid login'
+@app.route('/dashboard', methods = ['GET','POST'])
+def dashboard():
+    if session.get('student'):
+        return render_template('list.html',admin = False)
+    if session.get('user'):
+        return render_template('list.html',admin = True)
+    else:
+        return redirect('/login')
+
 @app.route('/logout')
 def logout():
     session.clear()
@@ -318,24 +327,26 @@ def make_excel():
 @app.route('/login',methods = ['GET','POST'])
 def login():
     if session.get('user'):
-        return redirect('/claims')
+        return redirect('/dashboard')
     if request.method == 'GET':
         return render_template('login.html')
     if request.method == 'POST':
         if special_validate(request.form['username'],request.form['password']):
             user = special_validate(request.form['username'],request.form['password'])
             session['user'] = user
-            return redirect('/claims')
+            app.logger.info(user)
+            return redirect('/dashboard')
         if department_validate(request.form['username'],request.form['password']):
             department = department_validate(request.form['username'],request.form['password'])
             session['user'] = department.id
-            return redirect('/claims')
+            return redirect('/dashboard')
         if student_validate(request.form['username'],request.form['password']):
             student = student_validate(request.form['username'],request.form['password'])
             session['student'] = student.id
-            return redirect('/claims')
+            return redirect('/dashboard')
         else:
-            return 'wrong credentials'
+            flash('Wrong Credentials')
+            return redirect('/login')
 @app.errorhandler(404)
 def page_not_found(e):
     """Return a custom 404 error."""
