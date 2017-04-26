@@ -5,6 +5,7 @@ from io import StringIO
 from flask_app import *
 from models import *
 db.create_all()
+
 sem_index = {'2nd Year Batch A':4, '2nd Year Batch B':4,'3rd Year Batch A':6, '3rd Year Batch B':6, '4th Year Batch A':8, '4th Year Batch B':8, '1st Year Batch A':2, '1st Year Batch B':2}
 
 with open('timetable_NEW.csv','r') as f:
@@ -34,14 +35,15 @@ for dep in depts:
     obj = Department(name = dep, username = com, password = com+'123password')
     db.session.add(obj)
 db.session.commit()
-
-for user in ['jointsec1','jointsec2']:
-    obj = Special(name = 'jointsec', username = user,password = user+str(123))
+def special_insert():
+    for user in ['jointsec1','jointsec2']:
+        obj = Special(name = 'jointsec', username = user,password = user+str(123))
+        db.session.add(obj)
+    db.session.commit()
+    obj = Special(name = 'office', username = 'office' ,password = 'office'+str(123))
     db.session.add(obj)
-db.session.commit()
-obj = Special(name = 'office', username = 'office' ,password = 'office'+str(123))
-db.session.add(obj)
-db.session.commit()
+    db.session.commit()
+special_insert()
 for batch,table in timetables.items():
     batch_obj = Batch(name = batch, semester = int(sem_index[batch]))
     db.session.add(batch_obj)

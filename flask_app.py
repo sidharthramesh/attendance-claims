@@ -228,7 +228,7 @@ def class_data():
 
 
 @app.route('/claims',methods = ['GET','POST'])
-def dashboard():
+def claims_api():
     user = session.get('user')
     if user == 'jointsec':
         #app.logger.info('Jointsec Logged in!')
@@ -297,6 +297,15 @@ def dashboard():
             return "Students can't post bitch!"
     else:
         return 'Invalid login'
+@app.route('/list', methods = ['GET','POST'])
+def dashboard:
+    if session.get('student'):
+        return render_template('list.html',admin = False)
+    if session.get('user'):
+        return render_template('list.html',admin = True)
+    else:
+        return redirect('/login')
+
 @app.route('/logout')
 def logout():
     session.clear()
@@ -322,6 +331,7 @@ def login():
         if special_validate(request.form['username'],request.form['password']):
             user = special_validate(request.form['username'],request.form['password'])
             session['user'] = user
+            app.logger.info(user)
             return redirect('/claims')
         if department_validate(request.form['username'],request.form['password']):
             department = department_validate(request.form['username'],request.form['password'])
