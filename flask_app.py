@@ -300,7 +300,7 @@ def claims_api():
             return "Students can't post bitch!"
     else:
         return 'Invalid login'
-@app.route('/list', methods = ['GET','POST'])
+@app.route('/dashboard', methods = ['GET','POST'])
 def dashboard:
     if session.get('student'):
         return render_template('list.html',admin = False)
