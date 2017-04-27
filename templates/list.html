@@ -11,8 +11,10 @@
         <h1>Attendance Claims</h1>
         <p>
           All the claims that have been submitted and are awaiting {%if admin%} your {%endif%}approval are listed below.<br/>
-          Logged in as <!-- insert username here -->.
-          <!-- Messages to tell the respective party here -->
+          Logged in as {{uname}}<!-- insert username here -->.
+          {%if admin%} Hi admin!<!-- Messages to tell the admin here -->
+          {%else%} Hi student!<!-- Messages to tell the student here -->
+          {%endif%}
         </p>
       </div>
       <div id="claims" class="show">Loading...</div>

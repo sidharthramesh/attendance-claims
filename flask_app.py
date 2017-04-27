@@ -66,7 +66,7 @@ def parse_claim(claim):
     c['Name'] = claim.user.name
     c['Period'] = claim.period
     c['Time'] = "{} to {}".format(get_12hr(claim.start_time),get_12hr(claim.end_time))
-    c['status'] = {'js':claim.approval_js,'office': claim.approval_office 'dept':claim.approval_dept}
+    c['status'] = {'js':claim.approval_js,'office': claim.approval_office,'dept':claim.approval_dept}
     c['dissapproved'] = claim.dissapprove
     return c
 def parse_claims_list(claims):
@@ -170,9 +170,7 @@ def special_validate(username,password):
 @app.route('/',methods = ['GET','POST'])
 def index():
     return render_template('index.html')
-@app.route('/list')
-def list():
-    return render_template('list.html')
+
 @app.route('/classdata',methods = ['GET','POST'])
 def class_data():
     """Request class data with params date=(2017-12-31) and batch=batch_a"""
@@ -303,9 +301,9 @@ def claims_api():
 @app.route('/dashboard', methods = ['GET','POST'])
 def dashboard():
     if session.get('student'):
-        return render_template('list.html',admin = False)
+        return render_template('list.html',admin = False, uname = User.query.get(session.get('student')).name)
     if session.get('user'):
-        return render_template('list.html',admin = True)
+        return render_template('list.html',admin = True, uname = session.get('user'))
     else:
         return redirect('/login')
 
