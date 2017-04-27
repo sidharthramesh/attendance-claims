@@ -306,6 +306,8 @@ def dashboard():
         u = session.get('user')
         if u == 'jointsec':
             uname = 'Joint Seceratary'
+        elif u == 'office':
+            uname = 'Office'
         else:
             uname = Department.query.get(u).name
         return render_template('list.html',admin = True, uname = uname)

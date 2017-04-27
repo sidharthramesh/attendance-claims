@@ -40,11 +40,14 @@ Response:<br>{<br>
 # Frontend
 * Add select all button
 * Fix time AM/PM
-* Where to post for approve and disapprove?
-* Make the status system
 * Fix the Date not going on today's date on startup.
 
 # Backend
 * Login Authentication
 * Inject username in List
 * Put message based on user.
+* /download broken
+* fix dept claims
+
+# Some end
+* keep getting the response from POST of '/claims' as invalid JSON, but it works...

@@ -16,6 +16,9 @@
         </p>
       </div>
       <div id="claims" class="show">Loading...</div>
+      {%if admin%}
+      <div class="show" id="download">To download the claims you just <span id="download_action"></span> click <a id="download_link" href="">here</a>.</div>
+      {%endif%}
       <div id="buttonTray" class="show">
         {%if admin%}
         <div id="buttonTray_approve">Approve</div>
@@ -36,6 +39,15 @@ div.selected > h3::before, div.selected > div > h4::before
   content:url('/static/checkbox-checked-mini.png');
   padding-right:8px;
 }
+#claims > .first > div.second > .claimCard > div:nth-child(2)
+{
+  display:none;
+}
+#download
+{
+  padding-bottom:100px !important;
+  visibility:hidden;
+}
 #buttonTray
 {
   width:calc(100% - 32px);
@@ -44,10 +56,6 @@ div.selected > h3::before, div.selected > div > h4::before
   bottom:0px;
   right:0px;
   box-shadow:0 0 10px rgba(0,0,0,0.24);
-}
-#claims
-{
-  padding-bottom:100px !important;
 }
 #mask
 {
@@ -203,12 +211,16 @@ document.getElementById('buttonTray_approve').addEventListener('click', function
           selected[i].parentNode.removeChild(selected[i]);
         }
       }
+      selectedIds = [];
       document.getElementById('mask').style.display = "none";
     }
   };
   document.getElementById('mask').style.display = "block";
+  document.getElementById('download').style.visibility = "visible";
+  document.getElementById('download_action').textContent = "disapproved";
+  document.getElementById('download_link').href = "/download?ids=" + selectedIds.join(',');
   xmlhttp.send(JSON.stringify({
-    action: 'disapprove',
+    action: 'approve',
     ids: selectedIds
   }));
 }, false);
@@ -236,12 +248,16 @@ document.getElementById('buttonTray_disapprove').addEventListener('click', funct
           selected[i].parentNode.removeChild(selected[i]);
         }
       }
+      selectedIds = [];
       document.getElementById('mask').style.display = "none";
     }
   };
   document.getElementById('mask').style.display = "block";
+  document.getElementById('download').style.visibility = "visible";
+  document.getElementById('download_action').textContent = "disapproved";
+  document.getElementById('download_link').href = "/download?ids=" + selectedIds.join(',');
   xmlhttp.send(JSON.stringify({
-    action: 'approve',
+    action: 'disapprove',
     ids: selectedIds
   }));
 }, false);

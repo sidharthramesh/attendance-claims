@@ -63,6 +63,7 @@ function createClaimCard (claim) {
   date = claim.Date.substring(0,16),
   time = claim.Time,
   id = claim.id,
+  disapproved = claim.dissapproved,
   status = claim.status;
   var ele = document.createElement('div');
   ele.className = "claimCard";
@@ -72,6 +73,30 @@ function createClaimCard (claim) {
   txt = txt.replace('TIME', time);
   ele.innerHTML = txt;
   ele.querySelector('input').value = id;
+  var yes = '/static/approved.png';
+  var no = '/static/unseen.png';
+  console.log(claim);
+  if (disapproved === 1) {
+    no = '/static/disapproved.png';
+  }
+  if (status.js === 1) {
+    ele.querySelector('img:nth-child(1)').src = yes;
+  }
+  else {
+    ele.querySelector('img:nth-child(1)').src = no;
+  }
+  if (status.office === 1) {
+    ele.querySelector('img:nth-child(2)').src = yes;
+  }
+  else {
+    ele.querySelector('img:nth-child(2)').src = no;
+  }
+  if (status.dept === 1) {
+    ele.querySelector('img:nth-child(3)').src = yes;
+  }
+  else {
+    ele.querySelector('img:nth-child(3)').src = no;
+  }
   return ele;
 };
 
@@ -93,5 +118,5 @@ window.addEventListener('load', function () {
 }, false);
 
 document.getElementById('buttonTray_logout').addEventListener('click', function () {
-  location.href = "/logout";
+  window.location.href = "/logout";
 });
