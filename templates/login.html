@@ -7,10 +7,9 @@
 	</head>
 	<body>
 		{% block body %}
-		{% if session['logged_in'] %}
+		{% if session.get('user') or session.get('student') %}
 		<p>You're logged in already!</p>
 		{% else %}
-
 
 		<form action="/login" method="POST">
 			<div class="login">
@@ -33,7 +32,11 @@
 		                <input type="submit" value="Log in" class="btn btn-primary btn-large btn-block" >
 					    <br>
 					</div>
+					{% if error %}
+	    <p class=error><strong>Error:</strong> {{ error }}
+	  {% endif %}
 				</div>
+
 			</div>
 		</form>
 

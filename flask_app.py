@@ -303,7 +303,12 @@ def dashboard():
     if session.get('student'):
         return render_template('list.html',admin = False, uname = User.query.get(session.get('student')).name)
     if session.get('user'):
-        return render_template('list.html',admin = True, uname = session.get('user'))
+        u = session.get('user')
+        if u == 'jointsec':
+            uname = 'Joint Seceratary'
+        else:
+            uname = Department.query.get(u).name
+        return render_template('list.html',admin = True, uname = uname)
     else:
         return redirect('/login')
 
@@ -324,6 +329,7 @@ def make_excel():
     #return render_template('table.html',claims = claims)
 @app.route('/login',methods = ['GET','POST'])
 def login():
+    error = None
     if session.get('user'):
         return redirect('/dashboard')
     if request.method == 'GET':
@@ -342,9 +348,8 @@ def login():
             student = student_validate(request.form['username'],request.form['password'])
             session['student'] = student.id
             return redirect('/dashboard')
-        else:
-            flash('Wrong Credentials')
-            return redirect('/login')
+        error = "Wrond credentials"
+        return render_template('login.html',error = error)
 @app.errorhandler(404)
 def page_not_found(e):
     """Return a custom 404 error."""
