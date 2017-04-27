@@ -38,10 +38,13 @@ Response:<br>{<br>
 ## Todo
 ---
 # Frontend
-* List UI for Joint sec, office, departments
-* Select all button for classes
-* Login Page
+* Add select all button
 * Fix time AM/PM
+* Where to post for approve and disapprove?
+* Make the status system
+* Fix the Date not going on today's date on startup.
 
 # Backend
 * Login Authentication
+* Inject username in List
+* Put message based on user.
