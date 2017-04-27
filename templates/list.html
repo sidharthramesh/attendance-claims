@@ -10,38 +10,46 @@
       <div class="show">
         <h1>Attendance Claims</h1>
         <p>
-          All the claims that have been submitted and are awaiting <!-- if statement here --> your <!-- endif -->approval are listed below.<br/>
+          All the claims that have been submitted and are awaiting {%if admin%} your {%endif%}approval are listed below.<br/>
+          Logged in as <!-- insert username here -->.
+          <!-- Messages to tell the respective party here -->
         </p>
       </div>
-      <div id="claims" class="show">
-        <div class="first">
-          <h2>Student Name</h2>
-          <div class="info">
-            Key: Value<br/>
-            Key: Value<br/>
-            Key: Value
-          </div>
-          <div class="second">
-            <h3>Event Name</h3>
-            <div class="info">
-              Key: Value<br/>
-              Key: Value<br/>
-              Key: Value
-            </div>
-            <div class="third"></div>
-          </div>
-        </div>
-      </div>
+      <div id="claims" class="show">Loading...</div>
       <div id="buttonTray" class="show">
-        <!-- Inject the snippet.html here -->
         {%if admin%}
         <div id="buttonTray_approve">Approve</div>
-        <!-- Else inject this -->
         <div id="buttonTray_logout">Logout</div>
         <div id="buttonTray_disapprove">Disapprove</div>
-        <script>
-function parse (claims) {};
-        </script>
+        <style>
+h3, h4
+{
+  cursor:pointer;
+}
+h3::before, h4::before
+{
+  content:url('/static/checkbox-unchecked-mini.png');
+  padding-right:8px;
+}
+div.selected > h3::before, div.selected > div > h4::before
+{
+  content:url('/static/checkbox-checked-mini.png');
+  padding-right:8px;
+}
+#buttonTray
+{
+  width:calc(100% - 32px);
+  height:48px;
+  position:fixed;
+  bottom:0px;
+  right:0px;
+  box-shadow:0 0 10px rgba(0,0,0,0.24);
+}
+#claims
+{
+  padding-bottom:100px !important;
+}
+        </style>
         {%else%}
         <div id="buttonTray_logout">Logout</div>
         {%endif%}
@@ -49,5 +57,121 @@ function parse (claims) {};
     </div>
 
     <script src="{{url_for('static',filename = 'script_list.js')}}"></script>
+    {%if admin%}
+    <script>
+function parse (claims) {
+  var events = Object.keys(claims);
+  var events_length = events.length;
+  if (events_length === 0) {
+    document.getElementById('claims').textContent = "Looks like you are all done with claims :)";
+  }
+  var people = [];
+  for (var  i = 0; i < events_length; i++) {
+    people[i] = {
+      keys: Object.keys(claims[events[i]]),
+      values: [],
+      info: []
+    };
+    var keys = people[i].keys;
+    var keys_length = keys.length;
+    for (var j = 0; j < keys_length; j++) {
+      var claims_ = claims[events[i]][keys[j]];
+      people[i].values.push(claims_);
+      people[i].info.push([
+        "Roll Number: " + claims[events[i]][keys[j]][0].Roll_no,
+        "Serial Number: " + claims[events[i]][keys[j]][0].Serial
+      ]);
+    }
+  }
+  var claims_ele = document.getElementById('claims');
+  for (var i = 0; i < events_length; i++) {
+    var event_ele = createFirstCard(events[i]);
+    var people_ = people[i];
+    var people_length = people_.keys.length;
+    for (var j = 0; j < people_length; j++) {
+      var person_ele = createSecondCard(people_.keys[j], people_.info[j]);
+      person_ele.querySelector('h3').addEventListener('click', function () {
+        if (this.parentNode.className.search('selected') === -1) {
+          var ids = this.parentNode.querySelectorAll('input[type=hidden]');
+          var ids_length = ids.length;
+          for (var l = 0; l < ids_length; l++) {
+            if (selectedIds.indexOf(ids[l].value) === -1) {
+              selectedIds.push(ids[l].value);
+            }
+          }
+          this.parentNode.className += ' selected';
+          var eles = this.parentNode.querySelectorAll('.claimCard');
+          var eles_length = eles.length;
+          for (var l = 0; l < eles_length; l++) {
+            if (eles[l].className.search('selected') === -1) {
+              eles[l].className += ' selected';
+            }
+          }
+        }
+        else {
+          var ids = this.parentNode.querySelectorAll('input[type=hidden]');
+          var ids_length = ids.length;
+          for (var l = 0; l < ids_length; l++) {
+            var selectedIdIndex = selectedIds.indexOf(ids[l].value);
+            if (selectedIdIndex > -1) {
+              selectedIds.splice(selectedIdIndex, 1);
+            }
+          }
+          this.parentNode.className = 'second';
+          var eles = this.parentNode.querySelectorAll('.claimCard');
+          var eles_length = eles.length;
+          for (var l = 0; l < eles_length; l++) {
+            if (eles[l].className.search('selected') > -1) {
+              eles[l].className = 'claimCard';
+            }
+          }
+        }
+      }, false);
+      var claims_ = people_.values[j];
+      var claims__length = claims_.length;
+      for (var k = 0; k < claims__length; k++) {
+        var claim_ele = createClaimCard(claims_[k]);
+        claim_ele.querySelector('h4').addEventListener('click', function () {
+          if (this.parentNode.parentNode.className.search('selected') === -1) {
+            if (selectedIds.indexOf(this.parentNode.parentNode.querySelector('input[type=hidden]').value) === -1) {
+              selectedIds.push(this.parentNode.parentNode.querySelector('input[type=hidden]').value);
+            }
+            this.parentNode.parentNode.className += " selected";
+            var eles = this.parentNode.parentNode.parentNode.querySelectorAll('.claimCard');
+            var eles_length = eles.length;
+            var flag = true;
+            for (var l = 0; l < eles_length; l++) {
+              if (eles[l].className.search('selected') === -1) {
+                flag = false;
+              }
+            }
+            if (flag) {
+              this.parentNode.parentNode.parentNode.className += " selected";
+            }
+          }
+          else {
+            var selectedIdIndex = selectedIds.indexOf(this.parentNode.parentNode.querySelector('input[type=hidden]').value);
+            if (selectedIdIndex > -1) {
+              selectedIds.splice(selectedIdIndex, 1);
+            }
+            this.parentNode.parentNode.className = 'claimCard';
+            if (this.parentNode.parentNode.parentNode.className.search('selected') > -1) {
+              this.parentNode.parentNode.parentNode.className = 'second';
+            }
+          }
+        }, false);
+        person_ele.appendChild(claim_ele);
+      }
+      event_ele.appendChild(person_ele);
+    }
+    claims_ele.appendChild(event_ele);
+  }
+};
+var selectedIds = [];
+
+document.getElementById('buttonTray_approve').addEventListener('click', function () {}, false);
+document.getElementById('buttonTray_disapprove').addEventListener('click', function () {}, false);
+    </script>
+    {%endif%}
   </body>
 </html>

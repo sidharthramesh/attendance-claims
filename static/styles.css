@@ -18,15 +18,15 @@ select
 }
 .selected
 {
-  background:#d6d8d7;
+  background:#d6d8d7 !important;
   color:black;
 }
 #classes_datedList > div,
 #classes_otherClasses,
 #claims > .first > div.second
 {
-  color:black !important;
-  background:white !important;
+  color:black;
+  background:white;
 }
 #classes_selection_selection > div
 {
@@ -44,6 +44,10 @@ select
 {
   color:red;
   font-size:12px;
+}
+#buttonTray
+{
+  background:#EEEEEE;
 }
 
 body
@@ -298,6 +302,7 @@ body
 #claims > .first > h2
 {
   margin:0px;
+  margin-bottom:8px;
 }
 #claims > .first > div.info
 {
@@ -305,8 +310,10 @@ body
 }
 #claims > .first > div.second
 {
-  padding:8px;
-  margin-bottom:8px;
+  padding:16px;
+  margin-bottom:16px;
+  border-radius:2px;
+  box-shadow:0 0 5px rgba(0,0,0,0.12);
 }
 #claims > .first > div.second:last-child
 {
@@ -319,6 +326,45 @@ body
 #claims > .first > div.second > .info
 {
   padding:8px;
+}
+#claims > .first > div.second > .claimCard
+{
+  width:calc(100% - 16px);
+  padding:8px;
+  display:table;
+  border-top:2px solid rgba(0,0,0,0.48);
+}
+#claims > .first > div.second > .claimCard > div
+{
+  display:table-cell;
+}
+#claims > .first > div.second > .claimCard > div:nth-child(1)
+{
+  padding:8px;
+}
+#claims > .first > div.second > .claimCard > div:nth-child(1) > h4
+{
+  font-size:1.12em;
+  font-style:italic;
+  line-height:1.14em;
+  margin:0px;
+  padding-bottom:8px;
+}
+#claims > .first > div.second > .claimCard > div:nth-child(1) > div
+{
+  padding-left:8px;
+  padding-left:16px;
+}
+#claims > .first > div.second > .claimCard > div:nth-child(2)
+{
+  width:24px;
+  height:84px;
+}
+#claims > .first > div.second > .claimCard > div:nth-child(2) > img
+{
+  width:24px;
+  height:24px;
+  margin-bottom:4px;
 }
 
 #buttonTray > div
