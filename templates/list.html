@@ -11,10 +11,8 @@
         <h1>Attendance Claims</h1>
         <p>
           All the claims that have been submitted and are awaiting {%if admin%} your {%endif%}approval are listed below.<br/>
-          Logged in as {{uname}}<!-- insert username here -->.
-          {%if admin%} Hi admin!<!-- Messages to tell the admin here -->
-          {%else%} Hi student!<!-- Messages to tell the student here -->
-          {%endif%}
+          Logged in as <!-- insert username here -->.
+          <!-- Messages to tell the respective party here -->
         </p>
       </div>
       <div id="claims" class="show">Loading...</div>
@@ -50,6 +48,16 @@ div.selected > h3::before, div.selected > div > h4::before
 #claims
 {
   padding-bottom:100px !important;
+}
+#mask
+{
+  width:100%;
+  height:100%;
+  position:absolute;
+  top:0px;
+  left:0px;
+  background:rgba(255,255,255,0.48);
+  display:none;
 }
         </style>
         {%else%}
@@ -171,9 +179,74 @@ function parse (claims) {
 };
 var selectedIds = [];
 
-document.getElementById('buttonTray_approve').addEventListener('click', function () {}, false);
-document.getElementById('buttonTray_disapprove').addEventListener('click', function () {}, false);
+document.getElementById('buttonTray_approve').addEventListener('click', function () {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("POST", '/claims');
+  xmlhttp.setRequestHeader("Content-Type", "application/json");
+  xmlhttp.onreadystatechange = function() {
+    var status = JSON.parse(this.responseText);
+    if (status.status) {
+      var selected = document.querySelectorAll('.second.selected');
+      var selected_length = selected.length;
+      for (var i = 0; i < selected_length; i++) {
+        selected[i].parentNode.removeChild(selected[i]);
+      }
+      var selected = document.querySelectorAll('.claimCard.selected');
+      var selected_length = selected.length;
+      for (var i = 0; i < selected_length; i++) {
+        selected[i].parentNode.removeChild(selected[i]);
+      }
+      var selected = document.querySelectorAll('.first');
+      var selected_length = selected.length;
+      for (var i = 0; i < selected_length; i++) {
+        if (selected[i].querySelectorAll('.second').length === 0) {
+          selected[i].parentNode.removeChild(selected[i]);
+        }
+      }
+      document.getElementById('mask').style.display = "none";
+    }
+  };
+  document.getElementById('mask').style.display = "block";
+  xmlhttp.send(JSON.stringify({
+    action: 'disapprove',
+    ids: selectedIds
+  }));
+}, false);
+document.getElementById('buttonTray_disapprove').addEventListener('click', function () {
+  var xmlhttp = new XMLHttpRequest();
+  xmlhttp.open("POST", '/claims');
+  xmlhttp.setRequestHeader("Content-Type", "application/json");
+  xmlhttp.onreadystatechange = function() {
+    var status = JSON.parse(this.responseText);
+    if (status.status) {
+      var selected = document.querySelectorAll('.second.selected');
+      var selected_length = selected.length;
+      for (var i = 0; i < selected_length; i++) {
+        selected[i].parentNode.removeChild(selected[i]);
+      }
+      var selected = document.querySelectorAll('.claimCard.selected');
+      var selected_length = selected.length;
+      for (var i = 0; i < selected_length; i++) {
+        selected[i].parentNode.removeChild(selected[i]);
+      }
+      var selected = document.querySelectorAll('.first');
+      var selected_length = selected.length;
+      for (var i = 0; i < selected_length; i++) {
+        if (selected[i].querySelectorAll('.second').length === 0) {
+          selected[i].parentNode.removeChild(selected[i]);
+        }
+      }
+      document.getElementById('mask').style.display = "none";
+    }
+  };
+  document.getElementById('mask').style.display = "block";
+  xmlhttp.send(JSON.stringify({
+    action: 'approve',
+    ids: selectedIds
+  }));
+}, false);
     </script>
+    <div id="mask"></div>
     {%endif%}
   </body>
 </html>

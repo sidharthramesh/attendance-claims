@@ -114,9 +114,9 @@ def js_approve(ids):
             db.session.commit()
         except:
             db.session.rollback()
-            return jsonify({"status":"failed"})
+            return jsonify({"status":False})
             raise
-    return jsonify({"status":"success. js approved for {}".format(str(ids))})
+    return jsonify({"status":True})
 def disapprove(ids):
     dissapproved = Claim.query.filter(Claim.id.in_(ids)).all()
     for claim in dissapproved:
@@ -125,8 +125,8 @@ def disapprove(ids):
             db.session.commit()
         except:
             db.session.rollback()
-            return jsonify({"status":"failed"})
-    return jsonify({"status":"success :( disapproved for {}".format(str(ids))})
+            return jsonify({"status":False})
+    return jsonify({"status":True})
 
 def office_approve(ids):
     approved = get_jsapproved_by_ids(ids)
@@ -136,9 +136,9 @@ def office_approve(ids):
             db.session.commit()
         except:
             db.session.rollback()
-            return jsonify({"status":"failed"})
+            return jsonify({"status":False})
             raise
-    return jsonify({"status":"success. office approved for {}".format(str(ids))})
+    return jsonify({"status":True})
 def department_approve(ids):
     approved = get_jsapproved_by_ids(ids)
     for claim in approved:
@@ -147,9 +147,9 @@ def department_approve(ids):
             db.session.commit()
         except:
             db.session.rollback()
-            return jsonify({"status":"failed"})
+            return jsonify({"status":False})
             raise
-    return jsonify({"status":"success. office approved for {}".format(str(ids))})
+    return jsonify({"status":True})
 def department_validate(username,password):
     result = Department.query.filter(Department.username == username).first()
     if result:
@@ -248,7 +248,7 @@ def claims_api():
             if action == 'approve':
                 app.logger.info(data['ids'])
                 return js_approve(data['ids'])
-            if action == 'disaprove':
+            if action == 'disapprove':
                 return disapprove(data['ids'])
     elif user == 'office':
         if request.method == 'GET':
@@ -264,7 +264,7 @@ def claims_api():
             action = data['action']
             if action == 'approve':
                 return office_approve(data['ids'])
-            if action == 'disaprove':
+            if action == 'disapprove':
                 return disapprove(data['ids'])
     elif user:
         dep = Department.query.get(user)
@@ -287,7 +287,7 @@ def claims_api():
             action = data['action']
             if action == 'approve':
                 return department_approve(data['ids'])
-            if action == 'disaprove':
+            if action == 'disapprove':
                 return disapprove(data['ids'])
     elif session.get('student'):
         student = User.query.get(session.get('student'))
