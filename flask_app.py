@@ -66,7 +66,7 @@ def parse_claim(claim):
     c['Name'] = claim.user.name
     c['Period'] = claim.period
     c['Time'] = "{} to {}".format(get_12hr(claim.start_time),get_12hr(claim.end_time))
-    c['status'] = claim.approval_js + claim.approval_office +claim.approval_dept
+    c['status'] = {'js':claim.approval_js,'office': claim.approval_office 'dept':claim.approval_dept}
     c['dissapproved'] = claim.dissapprove
     return c
 def parse_claims_list(claims):
