@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Change password - Manipal Attendance Claims</title>
+		<link rel="stylesheet" href="/static/loginstyle.css" type="text/css">
+		<meta name="viewport" content="width=device-width, user-scalable=no"/>
+	</head>
+	<body>
+
+		<form action="/change_password" method="POST">
+			<div class="login">
+				<div class="login-screen">
+					<div class="app-title">
+						<h1>Change password</h1>
+					</div>
+
+					<div class="login-form">
+						<div class="control-group">
+						<input type="password" class="login-field" value="" placeholder="Old password" name="oldpass">
+						<label class="login-field-icon fui-user" for="login-name"></label>
+						</div>
+
+						<div class="control-group">
+						<input type="password" class="login-field" value="" placeholder="New password" name="newpass">
+						<label class="login-field-icon fui-lock" for="login-pass"></label>
+						</div>
+						<div class="control-group">
+						<input type="password" class="login-field" value="" placeholder="Confirm password" name="confirm">
+						<label class="login-field-icon fui-lock" for="login-pass"></label>
+						</div>
+
+		                <input type="submit" value="Log in" class="btn btn-primary btn-large btn-block" >
+					    <br>
+					</div>
+					{% if status %}
+	    <p align="center"><strong>Info:</strong> {{ status }}
+	  {% endif %}
+				</div>
+
+			</div>
+		</form>
+	</body>
+</html>

@@ -329,6 +329,62 @@ def make_excel():
     app.logger.info(claims)
     return excel.make_response_from_array(claims, file_type = "csv", file_name="Claims_on_{}".format(str(date.today())))
     #return render_template('table.html',claims = claims)
+@app.route('/change_password',methods = ['GET','POST'])
+def change_password():
+
+    #app.logger.info(user)
+    if request.method == 'GET':
+        user = session.get('user')
+        if user:
+            return render_template('changepwd.html',status = None)
+        else:
+            return redirect('/login')
+    if request.method == 'POST':
+        user = session.get('user')
+        if user == 'jointsec':
+            app.logger.info('inside jointsec')
+            u = Special.query.filter(Special.username == session['username']).first()
+            app.logger.info(u.password)
+        elif user == 'office':
+            u = Special.query.filter(Special.username == 'office').first()
+        elif user:
+            u = Department.query.get(user)
+        app.logger.info(u)
+        app.logger.info(request.form['newpass'] + '-----'+ request.form['confirm'])
+        if request.form['newpass'] == request.form['confirm']:
+            #app.logger.info(request.form['oldpass'] + '-----'+ request.form['confirm'])
+            if request.form['oldpass'] == u.password:
+                app.logger.info(u.password)
+                u.password = request.form['newpass']
+                try:
+                    db.session.commit()
+                except:
+                    db.session.rollback()
+                    raise
+                return render_template('changepwd.html',status = 'Password Changed!')
+            return render_template('changepwd.html',status = 'Wrong old password')
+        return render_template('changepwd.html',status = "New passwords didn't match")
+
+@app.route('/change_sem',methods = ['GET','POST'])
+def change_sem():
+    if session.get('user') == 'jointsec':
+        if request.method == 'GET':
+            batches = Batch.query.all()
+            return render_template('batchchange.html',batches = batches)
+        if request.method == 'POST':
+            for batch_id,semester in request.form.items():
+                b = Batch.query.get(batch_id)
+                try:
+                    b.semester = int(semester)
+                except:
+                    pass
+            try:
+                db.session.commit()
+            except:
+                db.session.rollback()
+                raise
+            return redirect('/login')
+    return redirect('/login')
 @app.route('/login',methods = ['GET','POST'])
 def login():
     error = None
@@ -340,6 +396,7 @@ def login():
         if special_validate(request.form['username'],request.form['password']):
             user = special_validate(request.form['username'],request.form['password'])
             session['user'] = user
+            session['username'] = request.form['username']
             app.logger.info(user)
             return redirect('/dashboard')
         if department_validate(request.form['username'],request.form['password']):
@@ -355,4 +412,4 @@ def login():
 @app.errorhandler(404)
 def page_not_found(e):
     """Return a custom 404 error."""
-    return "Not found page", 404
+    return "What are you doing with life bro?", 404

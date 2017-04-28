@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Batch Changes</title>
+  </head>
+  <body>
+    <form class="" action="/change_sem" method="post">
+
+
+      {%for batch in batches%}
+      {{batch.name}}<input type="text" name="{{batch.id}}" value="{{batch.semester}}"><br>
+      {%endfor%}
+      <input type="submit" name="" value="Change">
+      </form>
+  </body>
+</html>
