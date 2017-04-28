@@ -268,7 +268,7 @@ def claims_api():
                 return disapprove(data['ids'])
     elif user:
         dep = Department.query.get(user)
-        non_disapproved = dep.query.filter(Claim.dissapprove == 0)
+        non_disapproved = dep.claims.filter(Claim.dissapprove == 0)
         if request.method == 'GET':
             if request.args.get('filter') == 'all':
                 claims_list = non_disapproved.filter(Claim.approval_office==1).all()
@@ -280,6 +280,7 @@ def claims_api():
                 return jsonify(parsed)
             else:
                 claims_list = non_disapproved.filter(Claim.approval_office==1,Claim.approval_dept==0).all()
+                app.logger.info(claims_list)
                 parsed = parse_claims_list(claims_list)
                 return jsonify(parsed)
         if request.method == 'POST':
@@ -310,6 +311,7 @@ def dashboard():
             uname = 'Office'
         else:
             uname = Department.query.get(u).name
+        app.logger.info(uname)
         return render_template('list.html',admin = True, uname = uname)
     else:
         return redirect('/login')
