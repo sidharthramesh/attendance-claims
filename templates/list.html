@@ -15,7 +15,7 @@
           {%if admin%}
           You need to select the checkboxes and approve or dissapprove
           {%else%}
-          The boxes mean that your claims have been approved by the jointsec, office and departments respectively. 
+          The boxes mean that your claims have been approved by the jointsec, office and departments respectively.
           {%endif%}
         </p>
       </div>
@@ -221,7 +221,7 @@ document.getElementById('buttonTray_approve').addEventListener('click', function
   };
   document.getElementById('mask').style.display = "block";
   document.getElementById('download').style.visibility = "visible";
-  document.getElementById('download_action').textContent = "disapproved";
+  document.getElementById('download_action').textContent = "approved";
   document.getElementById('download_link').href = "/download?ids=" + selectedIds.join(',');
   xmlhttp.send(JSON.stringify({
     action: 'approve',

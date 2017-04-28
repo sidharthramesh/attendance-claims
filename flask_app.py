@@ -26,7 +26,7 @@ from email.header import Header
 def sendmail(user, attachment, event):
     link= 'https://www.youtube.com/watch?v=CMNry4PE93Y'
     link_text= 'Just Click'
-    text = """Hey yo {name}. This be the confirmation that we've recieved your claims. We've attached the excel file with this mail.\nCheck if you've sent the correct details or keep it as a souvenir. \n\nHave an awesome day! \nMade for u by Stu (Simplyfying Things For You)\n\n¯\_(ツ)_/¯""".format(name = user.name,)
+    text = """Hey yo {name}. This be the confirmation that we've recieved your claims. We've attached the excel file with this mail.\nCheck if you've sent the correct details or keep it as a souvenir. You can also login at http://attendance-claims.appspot.com/login with your roll number as username to check the real-time approval status of your claims (Still in development). \n\nHave an awesome day! \nMade for u by Stu (Simplyfying Things For You)\n\n¯\_(ツ)_/¯""".format(name = user.name,)
     msg = MIMEMultipart()
     msg['Subject'] = '{} Claims'.format(event)
     msg['From'] = formataddr((str(Header('Simplified Claims', 'utf-8')), 'stu.checks.mail@gmail.com'))
@@ -71,9 +71,12 @@ def parse_claim(claim):
     return c
 def parse_claims_list(claims):
     return [parse_claim(claim) for claim in claims]
-def get_allclaims(*fil):
+def get_allclaims(*fil,approved = True):
     """formatter claims object to sand as json"""
-    non_disapproved = Claim.query.filter(Claim.dissapprove == 0)
+    if approved:
+        non_disapproved = Claim.query.filter(Claim.dissapprove == 0)
+    else:
+        non_disapproved = Claim.query.filter(Claim.dissapprove == 1)
     new_claims = non_disapproved.filter(*(fil))
     all_events = [claim.event for claim in new_claims.group_by(Claim.event)]
     claims = {}
@@ -88,7 +91,7 @@ def get_allclaims(*fil):
         claims[event] = eventdict
     return claims
 def format_claims(ids):
-    claims_objs = get_new_by_ids(ids)
+    claims_objs = Claim.query.filter(Claim.id.in_(ids))
     claims = [['Serial', 'Roll no','Name','Date','Classes Missed','Time','Event','Semester']]
     for claim in claims_objs:
         c = [claim.user.serial,claim.user.roll_no,claim.user.name,claim.date,claim.period,'{} to {}'.format(get_12hr(claim.start_time),get_12hr(claim.end_time)),claim.event,claim.batch.semester]
@@ -238,6 +241,8 @@ def claims_api():
                 return jsonify(get_allclaims())
             if request.args.get('filter') == 'approved':
                 return jsonify(get_allclaims(Claim.approval_js == 1))
+            if request.args.get('filter') == 'disapproved':
+                return jsonify(get_allclaims(approved = False))
             else:
                 return jsonify(get_allclaims(Claim.approval_js == 0))
 
@@ -271,18 +276,11 @@ def claims_api():
         non_disapproved = dep.claims.filter(Claim.dissapprove == 0)
         if request.method == 'GET':
             if request.args.get('filter') == 'all':
-                claims_list = non_disapproved.filter(Claim.approval_office==1).all()
-                parsed = parse_claims_list(claims_list)
-                return jsonify(parsed)
+                return jsonify(get_allclaims(Claim.department == dep,Claim.approval_office == 1))
             if request.args.get('filter') == 'approved':
-                claims_list = non_disapproved.filter(Claim.approval_dept==1).all()
-                parsed = parse_claims_list(claims_list)
-                return jsonify(parsed)
+                return jsonify(get_allclaims(Claim.department == dep,Claim.approval_dept == 1))
             else:
-                claims_list = non_disapproved.filter(Claim.approval_office==1,Claim.approval_dept==0).all()
-                app.logger.info(claims_list)
-                parsed = parse_claims_list(claims_list)
-                return jsonify(parsed)
+                return jsonify(get_allclaims(Claim.department == dep,Claim.approval_office==1))
         if request.method == 'POST':
             data = request.json
             action = data['action']
@@ -328,7 +326,7 @@ def make_excel():
     ids = [int(id) for id in ids]
     app.logger.info(ids)
     claims = format_claims(ids)
-
+    app.logger.info(claims)
     return excel.make_response_from_array(claims, file_type = "csv", file_name="Claims_on_{}".format(str(date.today())))
     #return render_template('table.html',claims = claims)
 @app.route('/login',methods = ['GET','POST'])

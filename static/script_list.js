@@ -109,7 +109,7 @@ window.addEventListener('load', function () {
       if (this.responseText) {
         document.getElementById('claims').innerHTML = "";
         var claims = JSON.parse(this.responseText);
-        parse(claims);
+          parse(claims);
       }
       else {}
     }
