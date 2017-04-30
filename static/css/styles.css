@@ -1,0 +1,419 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans|Raleway');
+body
+{
+  background:#EFEFEF;
+}
+#viewport h1
+{
+  color:#2C3E50;
+}
+select
+{
+  background: #EFEFEF
+}
+#viewport > div .tooltip
+{
+  color:rgba(0,0,0,0.48);
+}
+.selected
+{
+  background:#d6d8d7 !important;
+  color:black;
+}
+#classes_datedList > div,
+#classes_otherClasses,
+#claims > .first > div.second
+{
+  color:black;
+  background:white;
+}
+#classes_selection_selection > div
+{
+  background:#d6d8d7;
+}
+#classes_otherClasses_timetravel_line_inner
+{
+  background:#d6d8d7;
+}
+#classes_otherClasses_timetravel_line_inner_inner
+{
+  background:rgba(0,0,0,0.48);
+}
+.validation
+{
+  color:red;
+  font-size:12px;
+}
+#buttonTray
+{
+  background:#EEEEEE;
+}
+#flashes > div
+{
+  padding:8px;
+  margin-bottom:8px;
+  border:1px solid rgb(200,150,0);
+  background:rgb(255,200,48);
+}
+#links
+{
+  width:100%;
+  margin-bottom:8px;
+  display:table;
+}
+#links > a
+{
+  color:black !important;
+  font-weight:bold;
+  text-decoration:none !important;
+}
+#links > a > div
+{
+  padding:8px;
+  display:table-cell;
+}
+#links > a > div:hover
+{
+  background:rgba(0,0,0,0.16);
+}
+#links > a > div:active
+{
+  background:rgba(0,0,0,0.32);
+}
+
+body
+{
+  width:100%;
+  height:100%;
+  padding:0px;
+  margin:0px;
+  position:absolute;
+  top:0px;
+  left:0px;
+  overflow:hidden;
+}
+#viewport
+{
+  width:100%;
+  height:100%;
+  position:absolute;
+  top:0px;
+  left:0px;
+  font-family: 'Open Sans', sans-serif;
+  overflow-x:hidden;
+  overflow-y:visible;
+}
+#viewport > div
+{
+  padding:16px;
+  display:block;
+}
+#viewport > #thankyou
+{
+  display:none;
+}
+#viewport > #thankyou.show
+{
+  display:block;
+}
+#viewport > div .tooltip
+{
+  margin-bottom:8px;
+  font-family: 'Raleway', sans-serif;
+  font-style:italic;
+  font-size:16px;
+}
+#viewport > div input[type=text],
+#viewport > div input[type=number],
+#viewport > div input[type=email]
+{
+  width:100%;
+  font-size:24px;
+  padding:0px;
+  margin:0px;
+  background:transparent;
+  border:none;
+  outline:none;
+  border-bottom:1px solid rgba(0,0,0,0.48);
+}
+#viewport > div input[type=time]
+{
+  font-size:16px;
+  padding:0px;
+  margin:0px;
+  background:transparent;
+  border:none;
+  outline:none;
+  border-bottom:1px solid rgba(0,0,0,0.48);
+}
+#buttonTray
+{
+  width:calc(100% - 32px);
+  font-size:0px;
+  display:table !important;
+}
+#buttonTray > div
+{
+  width:calc(100% - 16px);
+  height:32px;
+  padding:8px;
+  font-size:16px;
+  text-align: center;
+  display:table-cell;
+}
+#buttonTray > div:hover
+{
+  background:rgba(0,0,0,0.16);
+}
+#buttonTray > div:hover
+{
+  background:rgba(0,0,0,0.32);
+}
+
+#year_years,
+#batch_batches
+{
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  font-family: 'Raleway', sans-serif;
+}
+#year_years > div,
+#batch_batches > div
+{
+  padding:8px;
+  display: table-cell;
+  text-align: center;
+  cursor:pointer;
+  color:rgba(0,0,0,0.84);
+  transition:all 0.2s;
+}
+#year_years > div:hover,
+#batch_batches > div:hover
+{
+  background:rgba(0,0,0,0.16);
+}
+#year_years > div:active,
+#batch_batches > div:active
+{
+  background:rgba(0,0,0,0.32);
+}
+
+#classes_calendar > table
+{
+  width:100%;
+}
+#classes_calendar > table td
+{
+  padding:8px;
+  cursor:pointer;
+}
+#classes_calendar > table td:hover
+{
+  background:rgba(0,0,0,0.16);
+}
+#classes_calendar > table td:active
+{
+  background:rgba(0,0,0,0.32);
+}
+#classes_datedList,
+#classes_selection_selection
+{
+  padding:8px;
+}
+#classes_datedList > div,
+#classes_selection_selection > div
+{
+  width:calc(100% - 16px);
+  padding:8px;
+  margin-bottom:8px;
+  display:table;
+}
+#classes_datedList > div > div,
+#classes_selection_selection > div > div,
+#classes_otherClasses > div
+{
+  display:table-cell;
+  padding:8px;
+}
+#classes_datedList > div > div:nth-child(1) > h2,
+#classes_selection_selection > div > div:nth-child(1) > h2,
+#classes_otherClasses > div:nth-child(1) > h2
+{
+  margin:0px;
+}
+#classes_datedList > div > div:nth-child(1) > p,
+#classes_selection_selection > div > div:nth-child(1) > p
+{
+  padding:0px;
+  padding-left:8px;
+  margin:0px;
+  font-size:0.9em;
+  color:gray;
+}
+#classes_datedList > div > div:nth-child(1) > span
+{
+  display:none;
+}
+#classes_selection_selection > div > div:nth-child(1) > span
+{
+  display:block;
+  color:gray;
+  padding-left:8px;
+  font-size:0.8em;
+}
+#classes_datedList > div > div:nth-child(1) > div,
+#classes_selection_selection > div > div:nth-child(1) > div
+{
+  padding:8px;
+}
+#classes_datedList > div > div:nth-child(1) > div > select,
+#classes_selection_selection > div > div:nth-child(1) > div > select,
+#classes_otherClasses > div:nth-child(1) > div > select
+{
+  padding:8px;
+  display:block;
+  border:transparent;
+  outline:none;
+}
+#classes_datedList > div > div:nth-child(2),
+#classes_selection_selection > div > div:nth-child(2),
+#classes_otherClasses > div:nth-child(2)
+{
+  width:32px;
+  vertical-align:top;
+}
+#classes_datedList > div > div:nth-child(2) > img,
+#classes_selection_selection > div > div:nth-child(2) > img,
+#classes_otherClasses > div:nth-child(2) > img
+{
+  cursor:pointer;
+  width:32px;
+  height:32px;
+  outline:none;
+}
+#classes_otherClasses
+{
+  width: calc(100% - 32px);
+  margin: 8px;
+  margin-top: 0px;
+  padding: 8px;
+  padding-top:0px;
+  display:table;
+}
+#classes_otherClasses
+{
+  cursor:pointer;
+}
+#classes_otherClasses input[type=text]
+{
+  margin-bottom:8px !important;
+}
+#classes_otherClasses > div:nth-child(1) > div
+{
+  margin-bottom:8px;
+}
+#classes_otherClasses.noshow > div:nth-child(1) *,
+#classes_otherClasses.noshow > div:nth-child(2)
+{
+  display: none;
+}
+#classes_otherClasses.noshow > div:nth-child(1) > h2
+{
+  display:inline !important;
+}
+#classes_otherClasses img
+{
+  margin-top:8px;
+}
+#claims > .first
+{
+  padding:8px;
+}
+#claims > .first > h2
+{
+  margin:0px;
+  margin-bottom:8px;
+}
+#claims > .first > div.info
+{
+  padding:8px;
+}
+#claims > .first > div.second
+{
+  padding:16px;
+  margin-bottom:16px;
+  border-radius:2px;
+  box-shadow:0 0 5px rgba(0,0,0,0.12);
+}
+#claims > .first > div.second:last-child
+{
+  margin:0px;
+}
+#claims > .first > div.second > h3
+{
+  margin:0px;
+}
+#claims > .first > div.second > .info
+{
+  padding:8px;
+}
+#claims > .first > div.second > .claimCard
+{
+  width:calc(100% - 16px);
+  padding:8px;
+  display:table;
+  border-top:2px solid rgba(0,0,0,0.48);
+}
+#claims > .first > div.second > .claimCard > div
+{
+  display:table-cell;
+}
+#claims > .first > div.second > .claimCard > div:nth-child(1)
+{
+  padding:8px;
+}
+#claims > .first > div.second > .claimCard > div:nth-child(1) > h4
+{
+  font-size:1.12em;
+  font-style:italic;
+  line-height:1.14em;
+  margin:0px;
+  padding-bottom:8px;
+}
+#claims > .first > div.second > .claimCard > div:nth-child(1) > div
+{
+  padding-left:8px;
+  padding-left:16px;
+}
+#claims > .first > div.second > .claimCard > div:nth-child(2)
+{
+  width:24px;
+  height:84px;
+}
+#claims > .first > div.second > .claimCard > div:nth-child(2) > img
+{
+  width:24px;
+  height:24px;
+  margin-bottom:4px;
+}
+
+#buttonTray > div
+{
+  cursor:pointer;
+}
+
+@media all and (min-width: 410px) {
+  #classes_calendar
+  {
+    max-width:410px;
+    margin:0 auto;
+  }
+}
+@media all and (min-width: 580px) {
+  #viewport > div
+  {
+    width:580px;
+    margin:0 auto;
+  }
+}

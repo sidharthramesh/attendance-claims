@@ -5,11 +5,29 @@ from config import SQLALCHEMY_DATABASE_URI
 from flask_migrate import Migrate
 import flask_excel as excel
 from datetime import date
+from flask_assets import Environment, Bundle
 app = Flask(__name__,static_url_path='/static')
 app.config["DEBUG"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
 app.config["SQLALCHEMY_POOL_RECYCLE"] = 299
 app.secret_key = os.urandom(12)
+assets = Environment(app)
+
+css = Bundle(
+    'css/loginstyle.css',
+    'css/styles.css',
+    output='css/min.css'
+)
+assets.register('css_all', css)
+
+js = Bundle(
+    'js/script_index.js',
+    'js/script_list.js',
+    filters='rjsmin',
+    output='js/app.js'
+)
+assets.register('js_all', js)
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 from models import *

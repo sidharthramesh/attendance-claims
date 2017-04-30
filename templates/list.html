@@ -3,7 +3,10 @@
   <head>
     <title>Manipal Attendance Claims</title>
     <meta name="viewport" content="width=device-width, user-scalable=no"/>
-    <link rel="stylesheet" href="{{url_for('static',filename = 'styles.css')}}"/>
+    {% assets "css_all" %}
+   <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" />
+   {% endassets %}
+   <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
   </head>
   <body>
     <div id="viewport">

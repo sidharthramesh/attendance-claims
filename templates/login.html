@@ -2,8 +2,11 @@
 <html>
 	<head>
 		<title>Login - Manipal Attendance Claims</title>
-		<link rel="stylesheet" href="/static/loginstyle.css" type="text/css">
+		{% assets "css_all" %}
+	 <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" />
+	 {% endassets %}
 		<meta name="viewport" content="width=device-width, user-scalable=no"/>
+		<link rel="icon" href="/static/favicon.ico" type="image/x-icon">
 	</head>
 	<body>
 		{% block body %}
