@@ -24,6 +24,7 @@ from email.utils import formataddr
 from email.header import Header
 
 def sendmail(user, attachment, event):
+    app.logger.info("Sending email...")
     link= 'https://www.youtube.com/watch?v=CMNry4PE93Y'
     link_text= 'Just Click'
     text = """Hey yo {name}. This be the confirmation that we've recieved your claims. We've attached the excel file with this mail.\nCheck if you've sent the correct details or keep it as a souvenir. You can also login at http://attendance-claims.appspot.com/login with your roll number as username to check the real-time approval status of your claims (Still in development). \n\nHave an awesome day! \nMade for u by Stu (Simplyfying Things For You)\n\n¯\_(ツ)_/¯""".format(name = user.name,)
@@ -299,6 +300,7 @@ def claims_api():
         return 'Invalid login'
 @app.route('/dashboard', methods = ['GET','POST'])
 def dashboard():
+    all_claims = False
     if session.get('student'):
         return render_template('list.html',admin = False, uname = User.query.get(session.get('student')).name)
     if session.get('user'):
@@ -310,7 +312,9 @@ def dashboard():
         else:
             uname = Department.query.get(u).name
         app.logger.info(uname)
-        return render_template('list.html',admin = True, uname = uname)
+        if request.args.get('claims') == 'approved':
+            all_claims = True
+        return render_template('list.html',admin = True, uname = uname,all_claims = all_claims)
     else:
         return redirect('/login')
 
@@ -323,13 +327,15 @@ def make_excel():
     #print(request.json)
     ids = request.args.get('ids')
     ids = ids.split(',')
+    if ids[0] == '':
+        return 'None'
     ids = [int(id) for id in ids]
     app.logger.info(ids)
     claims = format_claims(ids)
     app.logger.info(claims)
     return excel.make_response_from_array(claims, file_type = "csv", file_name="Claims_on_{}".format(str(date.today())))
     #return render_template('table.html',claims = claims)
-@app.route('/change_password',methods = ['GET','POST'])
+@app.route('/changepassword',methods = ['GET','POST'])
 def change_password():
 
     #app.logger.info(user)
@@ -361,11 +367,12 @@ def change_password():
                 except:
                     db.session.rollback()
                     raise
-                return render_template('changepwd.html',status = 'Password Changed!')
+                flash("Password successfully changed!")
+                return redirect('/dashboard')
             return render_template('changepwd.html',status = 'Wrong old password')
         return render_template('changepwd.html',status = "New passwords didn't match")
 
-@app.route('/change_sem',methods = ['GET','POST'])
+@app.route('/changesem',methods = ['GET','POST'])
 def change_sem():
     if session.get('user') == 'jointsec':
         if request.method == 'GET':
@@ -383,8 +390,9 @@ def change_sem():
             except:
                 db.session.rollback()
                 raise
-            return redirect('/login')
-    return redirect('/login')
+            flash("Semesters have been changed!")
+    flash('Only Joint Seceratary can do that')
+    return redirect('/dashboard')
 @app.route('/login',methods = ['GET','POST'])
 def login():
     error = None

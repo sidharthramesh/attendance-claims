@@ -1,3 +1,18 @@
+function flash (text) {
+  var flag = true;
+  var check = document.querySelectorAll('#flashes > div');
+  var check_length = check.length;
+  for (var i = 0; i < check_length; i++) {
+    if (check[i].textContent === text) {
+      flag = false;
+    }
+  }
+  if (flag) {
+    var ele = document.createElement('div');
+    ele.innerHTML = text;
+    document.getElementById('flashes').appendChild(ele);
+  }
+};
 function parse (claims) {
   var len = claims.length;
   var main = createFirstCard(claims[0].Name, [
@@ -75,7 +90,6 @@ function createClaimCard (claim) {
   ele.querySelector('input').value = id;
   var yes = '/static/approved.png';
   var no = '/static/unseen.png';
-  console.log(claim);
   if (disapproved === 1) {
     no = '/static/disapproved.png';
   }
@@ -100,10 +114,14 @@ function createClaimCard (claim) {
   return ele;
 };
 
+if (!claimpath) {
+  claimpath = '/claims';
+}
+
 window.addEventListener('load', function () {
   // On xhttp sucess
   var xmlhttp = new XMLHttpRequest();
-  xmlhttp.open("GET", '/claims');
+  xmlhttp.open("GET", claimpath);
   xmlhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       if (this.responseText) {

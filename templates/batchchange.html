@@ -3,15 +3,26 @@
   <head>
     <meta charset="utf-8">
     <title>Batch Changes</title>
+    <link rel="stylesheet" href="{{url_for('static',filename = 'styles.css')}}"/>
   </head>
   <body>
-    <form class="" action="/change_sem" method="post">
-
-
-      {%for batch in batches%}
-      {{batch.name}}<input type="text" name="{{batch.id}}" value="{{batch.semester}}"><br>
-      {%endfor%}
-      <input type="submit" name="" value="Change">
-      </form>
+    <form id="semsform" action="/changesem" method="post">
+    <div id="viewport">
+          {%for batch in batches%}
+          <div class="show">
+            <div class="tooltip">{{batch.name}}</div>
+            <input type="text" name="{{batch.id}}" value="{{batch.semester}}"><br>
+          </div>
+          {%endfor%}
+          <div id="buttonTray" class="show">
+            <div id="buttonTray_submit">Change Semester</div>
+          </div>
+    </div>
+  </form>
+  <script>
+document.getElementById('buttonTray_submit').addEventListener('click', function () {
+  document.getElementById('semsform').submit();
+}, false);
+  </script>
   </body>
 </html>

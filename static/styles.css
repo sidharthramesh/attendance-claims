@@ -49,6 +49,38 @@ select
 {
   background:#EEEEEE;
 }
+#flashes > div
+{
+  padding:8px;
+  margin-bottom:8px;
+  border:1px solid rgb(200,150,0);
+  background:rgb(255,200,48);
+}
+#links
+{
+  width:100%;
+  margin-bottom:8px;
+  display:table;
+}
+#links > a
+{
+  color:black !important;
+  font-weight:bold;
+  text-decoration:none !important;
+}
+#links > a > div
+{
+  padding:8px;
+  display:table-cell;
+}
+#links > a > div:hover
+{
+  background:rgba(0,0,0,0.16);
+}
+#links > a > div:active
+{
+  background:rgba(0,0,0,0.32);
+}
 
 body
 {
