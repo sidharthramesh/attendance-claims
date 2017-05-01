@@ -263,29 +263,54 @@ function harvest () {
   document.getElementById('classes_validation').innerHTML = ""
   document.getElementById('events_validation').innerHTML = "";
   var flag = true;
+  var scroller = true;
   if (!(/^\w[\w\s!]*/.test(details.name))) {
     flag = false;
     document.getElementById('name_validation').innerHTML = "Invalid Name.";
+    if (scroller) {
+      document.getElementById('name').scrollIntoView(true);
+      scroller = false;
+    }
   }
   if (!(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(details.email))) {
     flag = false;
     document.getElementById('email_validation').innerHTML = "Invalid Email.";
+    if (scroller) {
+      document.getElementById('email').scrollIntoView(true);
+      scroller = false;
+    }
   }
   if (!(/^\d{9,}/.test(details.rollNumber))) {
     flag = false;
     document.getElementById('number_validation').innerHTML = "Invalid Roll Number.";
+    if (scroller) {
+      document.getElementById('number').scrollIntoView(true);
+      scroller = false;
+    }
   }
   if (!(/^\d+/.test(details.serialNumber))) {
     flag = false;
     document.getElementById('serialNumber_validation').innerHTML = "Invalid Serial Number.";
+    if (scroller) {
+      document.getElementById('serialNumber').scrollIntoView(true);
+      scroller = false;
+    }
   }
   if (details.selectedClasses.length === 0) {
     flag = false;
-    document.getElementById('classes_validation').innerHTML = "Please select the classes you have missed."
+    document.getElementById('classes_validation').innerHTML = "Please select the classes you have missed.";
+    if (scroller) {
+      document.getElementById('classes_selection').scrollIntoView(true);
+      scroller = false;
+    }
   }
   if (!(/^\w[\w\s]*/.test(details.event))) {
     flag = false;
     document.getElementById('events_validation').innerHTML = "Invalid Event Name.";
+    if (scroller) {
+      document.getElementById('events').scrollIntoView(true);
+      scroller = false;
+    }
   }
   if (flag === true) {
     return details;

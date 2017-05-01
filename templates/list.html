@@ -20,7 +20,10 @@
           You need to select the checkboxes and approve or disapprove.<br/>
           <div id="links">
             <a href="/changepassword"><div>Change Password</div></a>
+            {%if uname == 'Joint Seceratary'%}
             <a href="/changesem"><div>Change the Semesters</div></a>
+            <a href="/changeclass"><div>Change the Classes</div></a>
+            {%endif%}
             <a href="/dashboard?claims=approved"><div>Previously Approved Claims</div></a>
           </div>
           {%else%}

@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>Batch Changes</title>
-    <link rel="stylesheet" href="{{url_for('static',filename = 'styles.css')}}"/>
+    {% assets "css_all" %}
+	 <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" />
+	 {% endassets %}
   </head>
   <body>
     <form id="semsform" action="/changesem" method="post">

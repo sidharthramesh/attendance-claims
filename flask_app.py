@@ -6,6 +6,9 @@ from flask_migrate import Migrate
 import flask_excel as excel
 from datetime import date
 from flask_assets import Environment, Bundle
+from departments import depts
+from io import StringIO
+import pandas as pd
 app = Flask(__name__,static_url_path='/static')
 app.config["DEBUG"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
@@ -67,9 +70,65 @@ def sendmail(user, attachment, event):
     mailer.sendmail('stu.checks.mail@gmail.com',user.email,msg.as_string())
     mailer.close()
     return
+def insert_classes(string,all_depts):
+    app.logger.info(string)
+    depts = all_depts.splitlines()
+    batches = string.decode().split('\r\n,,,,,\r\n')
+    batches_new = [batch[1:] if batch[0]=='\n' else batch for batch in batches]
+    batches = batches_new
+    app.logger.info(batches)
+    timetables = {}
+    for table in batches:
+        batch = table.splitlines()[0].split(',')[0]
+        t =pd.read_csv(StringIO(table))
+        t = t[t.columns[1:]]
+        t = t.transpose().to_dict()
+        timetables[batch] = t
+    sem_index = {batch.name:int(batch.semester) for batch in Batch.query.all()}
+    if len(sem_index.keys()) < 8:
+        no_batches = True
+        sem_index = {'2nd Year Batch A':4, '2nd Year Batch B':4,'3rd Year Batch A':6, '3rd Year Batch B':6, '4th Year Batch A':8, '4th Year Batch B':8, '1st Year Batch A':2, '1st Year Batch B':2}
+    for batch,table in timetables.items():
+
+        app.logger.info(batch)
+        batch_obj = Batch(name = batch, semester = int(sem_index[batch]))
+        if no_batches:
+            db.session.add(batch_obj)
+            db.session.commit()
+        for day,classes in table.items():
+            for time,period in classes.items():
+                if isinstance(period, str):
+                    [start_time,end_time] = [dateutil.parser.parse(a).time() for a in time.split(' to ')]
+                    department = None
+                    for dep in depts:
+                        if dep in period:
+                            department = dep
+                            break
+                    print("{} {}".format(period,department))
+                    department = Department.query.filter_by(name = department).first()
+                    p = Period(name = period, start_time = start_time, end_time=end_time, batch = batch_obj, day = int(day+1),department = department)
+                    print(p)
+                    db.session.add(p)
+                    db.session.commit()
+def delete_all(Object):
+    classes = Object.query.all()
+    for period in classes:
+        db.session.delete(period)
+    try:
+        db.session.commit()
+    except:
+        db.session.rollback()
+        raise
+
+def reinsert_classes(string,all_depts):
+    delete_all(Period)
+    delete_all(Batch)
+    insert_classes(string,all_depts)
+    return
 
 def get_schedule(date,batch):
     day = dateutil.parser.parse(date).weekday()+1
+    app.logger.info(day)
     return Period.query.filter_by(day=day, batch = Batch.query.filter_by(name=batch).first()).order_by(Period.start_time).all()
 def process_claim(data):
     pass
@@ -198,6 +257,21 @@ def special_validate(username,password):
 @app.route('/',methods = ['GET','POST'])
 def index():
     return render_template('index.html')
+@app.route('/changeclass', methods = ['GET','POST'])
+def form():
+    if session.get('user') == 'jointsec':
+        if request.method == 'GET':
+            return render_template('changeclass.html')
+
+        if request.method == 'POST':
+            f = request.files['data_file']
+            csv_string = f.read()
+            app.logger.info(reinsert_classes(csv_string,depts))
+            app.logger.info(Period.query.all())
+            flash("Classes updated!")
+            return redirect('/dashboard')
+    else:
+        return redirect('/dashboard')
 
 @app.route('/classdata',methods = ['GET','POST'])
 def class_data():

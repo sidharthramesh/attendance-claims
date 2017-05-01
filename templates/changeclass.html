@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Change Class - Manipal Attendance Claims</title>
+    <meta name="viewport" content="width=device-width, user-scalable=no"/>
+    {% assets "css_all" %}
+   <link rel="stylesheet" href="{{ ASSET_URL }}" type="text/css" />
+   {% endassets %}
+    <link rel="icon" href="/static/favicon.ico" type="image/x-icon">
+  </head>
+  <body>
+    <div id="viewport">
+      <div class="show">
+        <h1>Change Classes</h1>
+        <p>Please upload the .csv file</p>
+        <a href = "https://drive.google.com/uc?export=download&id=0B30g1WfHiiY-SnBCMXdXYUNqaTg">Download template</a>
+      </div>
+      <div class="show">
+        <form id="form" action="/changeclass" method="post" enctype="multipart/form-data">
+          <input type="file" name="data_file"/>
+      </form>
+      </div>
+      <div id="loading" style="display:none">Working on it!. Wait a minute please.</div>
+      <div id="buttonTray">
+        <div id="buttonTray_submit">Submit</div>
+      </div>
+    </div>
+    <script>
+document.getElementById('buttonTray_submit').addEventListener('click', function () {
+  document.getElementById('form').submit();
+  var buttonTray = document.getElementById('buttonTray');
+  buttonTray.parentNode.removeChild(buttonTray);
+  document.getElementById('loading').style.display = "block";
+}, false);
+    </script>
+  </body>
+</html>
