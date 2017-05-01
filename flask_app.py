@@ -22,11 +22,17 @@ assets.register('css_all', css)
 
 js = Bundle(
     'js/script_index.js',
-    'js/script_list.js',
     filters='rjsmin',
     output='js/app.js'
 )
 assets.register('js_all', js)
+
+js_list = Bundle(
+    'js/script_list.js',
+    filters='rjsmin',
+    output='js/list.js'
+)
+assets.register('js_list', js_list)
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

@@ -24,9 +24,8 @@
             <a href="/dashboard?claims=approved"><div>Previously Approved Claims</div></a>
           </div>
           {%else%}
-          <p>
-          <img src = "static/example.jpg" alt = "Example">
-        </p>
+            <img src = "static/example.jpg" alt = "Example" id = "example">
+
           {%endif%}
           {%else%}
           Any previously approved claims will show up here. If you want to download them as an excel file, please select the ones you wish to download and click download.
@@ -110,7 +109,9 @@ div.selected > h3::before, div.selected > div > h4::before
     {%if all_claims%}
     <script>var claimpath = '/claims?filter=approved';</script>
     {%endif%}
-    <script src="{{url_for('static',filename = 'script_list.js')}}"></script>
+    {% assets "js_list" %}
+    <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
     {%if admin%}
     <script>
 function parse (claims) {

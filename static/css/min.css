@@ -86,6 +86,11 @@ body
 {
   background:#EFEFEF;
 }
+#example
+{
+  width: 100%;
+  height: auto;
+}
 #viewport h1
 {
   color:#2C3E50;
@@ -324,11 +329,12 @@ body
 #classes_otherClasses > div:nth-child(1) > h2
 {
   margin:0px;
+  font-weight:normal;
 }
 #classes_datedList > div > div:nth-child(1) > p,
 #classes_selection_selection > div > div:nth-child(1) > p
 {
-  padding:0px;
+  padding:4px;
   padding-left:8px;
   margin:0px;
   font-size:0.9em;
@@ -345,8 +351,8 @@ body
   padding-left:8px;
   font-size:0.8em;
 }
-#classes_datedList > div > div:nth-child(1) > div,
-#classes_selection_selection > div > div:nth-child(1) > div
+#classes_datedList > div > div:nth-child(1) > div:nth-child(1),
+#classes_selection_selection > div > div:nth-child(1) > div:nth-child(1)
 {
   padding:8px;
 }
