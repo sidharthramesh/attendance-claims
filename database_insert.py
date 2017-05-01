@@ -5,14 +5,14 @@ from io import StringIO
 from flask_app import *
 from models import *
 from departments import depts
-
+sem_index = {'2nd Year Batch A':4, '2nd Year Batch B':4,'3rd Year Batch A':6, '3rd Year Batch B':6, '4th Year Batch A':8, '4th Year Batch B':8, '1st Year Batch A':2, '1st Year Batch B':2}
 def main():
     db.create_all()
     sem_index = {'2nd Year Batch A':4, '2nd Year Batch B':4,'3rd Year Batch A':6, '3rd Year Batch B':6, '4th Year Batch A':8, '4th Year Batch B':8, '1st Year Batch A':2, '1st Year Batch B':2}
 
 
 def insert_depts(all_depts):
-    depts = deptarts.splitlines()
+    depts = all_depts.splitlines()
     for dep in depts:
         com = dep.split(' ')[0].lower()
         obj = Department(name = dep, username = com, password = com+'123password')
@@ -20,7 +20,7 @@ def insert_depts(all_depts):
     db.session.commit()
 
 def insert_classes(string,all_depts):
-    depts = deptarts.splitlines()
+    depts = all_depts.splitlines()
     batches = string.split(',,,,,')
     batches_new = [batch[1:] if batch[0]=='\n' else batch for batch in batches]
     batches = batches_new

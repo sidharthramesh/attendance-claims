@@ -78,6 +78,7 @@ def insert_classes(string,all_depts):
     batches = batches_new
     app.logger.info(batches)
     timetables = {}
+    no_batches = False
     for table in batches:
         batch = table.splitlines()[0].split(',')[0]
         t =pd.read_csv(StringIO(table))
@@ -85,14 +86,15 @@ def insert_classes(string,all_depts):
         t = t.transpose().to_dict()
         timetables[batch] = t
     sem_index = {batch.name:int(batch.semester) for batch in Batch.query.all()}
-    if len(sem_index.keys()) < 8:
+    if len(sem_index.keys()) < 7:
         no_batches = True
         sem_index = {'2nd Year Batch A':4, '2nd Year Batch B':4,'3rd Year Batch A':6, '3rd Year Batch B':6, '4th Year Batch A':8, '4th Year Batch B':8, '1st Year Batch A':2, '1st Year Batch B':2}
     for batch,table in timetables.items():
 
         app.logger.info(batch)
-        batch_obj = Batch(name = batch, semester = int(sem_index[batch]))
+        batch_obj = Batch.query.filter(Batch.name == batch).first()
         if no_batches:
+            batch_obj = Batch(name = batch, semester = int(sem_index[batch]))
             db.session.add(batch_obj)
             db.session.commit()
         for day,classes in table.items():
@@ -122,7 +124,7 @@ def delete_all(Object):
 
 def reinsert_classes(string,all_depts):
     delete_all(Period)
-    delete_all(Batch)
+    #delete_all(Batch)
     insert_classes(string,all_depts)
     return
 
@@ -489,8 +491,10 @@ def change_sem():
                 db.session.rollback()
                 raise
             flash("Semesters have been changed!")
-    flash('Only Joint Seceratary can do that')
-    return redirect('/dashboard')
+            return redirect('/dashboard')
+    else:
+        flash('Only Joint Seceratary can do that')
+        return redirect('/dashboard')
 @app.route('/login',methods = ['GET','POST'])
 def login():
     error = None
