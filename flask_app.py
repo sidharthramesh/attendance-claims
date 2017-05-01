@@ -50,8 +50,8 @@ from email.header import Header
 def sendmail(user, attachment, event):
     app.logger.info("Sending email...")
     link= 'https://www.youtube.com/watch?v=CMNry4PE93Y'
-    link_text= 'Just Click'
-    text = """Hey yo {name}. This be the confirmation that we've recieved your claims. We've attached the excel file with this mail.\nCheck if you've sent the correct details or keep it as a souvenir. You can also login at http://attendance-claims.appspot.com/login with your roll number as username to check the real-time approval status of your claims (Still in development). \n\nHave an awesome day! \nMade for u by Stu (Simplyfying Things For You)\n\n¯\_(ツ)_/¯""".format(name = user.name,)
+    link_text= "Don't click on me"
+    text = """Hey yo {name},\n This be the confirmation that we've recieved your claims. We've attached the excel file with this mail.\nCheck if you've sent the correct details or keep it as a souvenir. You can also check your real-time approval status at http://attendance-claims.appspot.com/login. \n\nHave an awesome day! \nMade for u by Stu (Simplyfying Things For You)\n\n¯\_(ツ)_/¯""".format(name = user.name,)
     msg = MIMEMultipart()
     msg['Subject'] = '{} Claims'.format(event)
     msg['From'] = formataddr((str(Header('Simplified Claims', 'utf-8')), 'stu.checks.mail@gmail.com'))
