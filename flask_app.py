@@ -157,25 +157,39 @@ def parse_claim(claim):
     return c
 def parse_claims_list(claims):
     return [parse_claim(claim) for claim in claims]
-def get_allclaims(*fil,approved = True):
+def get_allclaims(*fil,approved = True,department = False):
     """formatter claims object to sand as json"""
     if approved:
         non_disapproved = Claim.query.filter(Claim.dissapprove == 0)
     else:
         non_disapproved = Claim.query.filter(Claim.dissapprove == 1)
     new_claims = non_disapproved.filter(*(fil))
-    all_events = [claim.event for claim in new_claims.group_by(Claim.event)]
-    claims = {}
-    for event in all_events:
-        eventdict = {}
-        eventclaims = new_claims.filter(Claim.event == event)
-        users = [claim.user for claim in eventclaims.group_by(Claim.user_id)]
-        for user in users:
-            userclaims = eventclaims.filter(Claim.user == user)
-            userclaims = parse_claims_list(userclaims)
-            eventdict[user.name] = userclaims
-        claims[event] = eventdict
-    return claims
+    if not department:
+        all_events = [claim.event for claim in new_claims.group_by(Claim.event)]
+        claims = {}
+        for event in all_events:
+            eventdict = {}
+            eventclaims = new_claims.filter(Claim.event == event)
+            users = [claim.user for claim in eventclaims.group_by(Claim.user_id)]
+            for user in users:
+                userclaims = eventclaims.filter(Claim.user == user)
+                userclaims = parse_claims_list(userclaims)
+                eventdict[user.name] = userclaims
+            claims[event] = eventdict
+        return claims
+    if department:
+        all_batches = [claim.batch for claim in new_claims.group_by(Claim.batch_id)]
+        claims = {}
+        for batch in all_batches:
+            batchdict = {}
+            batchclaims = new_claims.filter(Claim.batch == batch)
+            users = [claim.user for claim in batchclaims.group_by(Claim.user_id)]
+            for user in users:
+                userclaims = batchclaims.filter(Claim.user == user)
+                userclaims = parse_claims_list(userclaims)
+                batchdict[user.serial] = userclaims
+            claims[batch.name] = batchdict
+        return claims
 def format_claims(ids):
     claims_objs = Claim.query.filter(Claim.id.in_(ids))
     claims = [['Serial', 'Roll no','Name','Date','Classes Missed','Time','Event','Semester']]
@@ -377,11 +391,11 @@ def claims_api():
         non_disapproved = dep.claims.filter(Claim.dissapprove == 0)
         if request.method == 'GET':
             if request.args.get('filter') == 'all':
-                return jsonify(get_allclaims(Claim.department == dep,Claim.approval_office == 1))
+                return jsonify(get_allclaims(Claim.department == dep,Claim.approval_office == 1, department = True))
             if request.args.get('filter') == 'approved':
-                return jsonify(get_allclaims(Claim.department == dep,Claim.approval_dept == 1))
+                return jsonify(get_allclaims(Claim.department == dep,Claim.approval_dept == 1, department = True))
             else:
-                return jsonify(get_allclaims(Claim.department == dep,Claim.approval_office==1))
+                return jsonify(get_allclaims(Claim.department == dep,Claim.approval_office==1, department = True))
         if request.method == 'POST':
             data = request.json
             action = data['action']
