@@ -194,7 +194,7 @@ def format_claims(ids):
     claims_objs = Claim.query.filter(Claim.id.in_(ids))
     claims = [['Serial', 'Roll no','Name','Date','Classes Missed','Time','Event','Semester']]
     for claim in claims_objs:
-        c = [claim.user.serial,claim.user.roll_no,claim.user.name,claim.date,claim.period,'{} to {}'.format(get_12hr(claim.start_time),get_12hr(claim.end_time)),claim.event,claim.batch.semester]
+        c = [claim.user.serial,claim.user.roll_no,claim.user.name,claim.date.strftime('%d-%B-%y'),claim.period,'{} to {}'.format(get_12hr(claim.start_time),get_12hr(claim.end_time)),claim.event,claim.batch.semester]
         claims.append(c)
     return claims
 def get_new_by_ids(ids):
