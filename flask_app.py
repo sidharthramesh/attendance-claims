@@ -270,7 +270,10 @@ def special_validate(username,password):
         if result.password == password:
             return result.name
     return None
-@app.route('/',methods = ['GET','POST'])
+@app.route('/',methods = ['GET'])
+def landing():
+    return render_template('landing.html')
+@app.route('/claim',methods = ['GET','POST'])
 def index():
     return render_template('index.html')
 @app.route('/changeclass', methods = ['GET','POST'])
@@ -344,7 +347,6 @@ def class_data():
         sendmail(user,array_to_csv(format_claims(id_index)),data['event'])
         return jsonify(id_index)
         #return jsonify({"status":"success"})
-
 
 @app.route('/claims',methods = ['GET','POST'])
 def claims_api():
