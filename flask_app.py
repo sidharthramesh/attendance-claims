@@ -74,7 +74,10 @@ def sendmail(user, attachment, event):
 def insert_classes(string,all_depts):
     app.logger.info(string)
     depts = all_depts.splitlines()
-    batches = string.decode().split('\r\n,,,,,\r\n')
+    try:
+        batches = string.decode().split('\r\n,,,,,\r\n')
+    except AttributeError:
+        batches = string.split('\r\n,,,,,\r\n')
     batches_new = [batch[1:] if batch[0]=='\n' else batch for batch in batches]
     batches = batches_new
     app.logger.info(batches)
