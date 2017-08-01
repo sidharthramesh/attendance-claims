@@ -292,6 +292,22 @@ def form():
     else:
         return redirect('/dashboard')
 
+@app.route('/syncclass', methods = ['GET','POST'])
+def sync():
+    if session.get('user') == 'jointsec':
+        if request.method == 'GET':
+            return render_template('changeclass.html')
+
+        if request.method == 'POST':
+            f = requests.get('https://docs.google.com/spreadsheets/d/1rKUQs_gsfwgAU3Cg774Qr7i8LicqQ6cFtZEqC16ZjyQ/export?format=csv')
+            csv_string = f.text
+            app.logger.info(reinsert_classes(csv_string,depts))
+            app.logger.info(Period.query.all())
+            flash("Classes updated!")
+            return redirect('/dashboard')
+    else:
+        return redirect('/dashboard')
+
 @app.route('/classdata',methods = ['GET','POST'])
 def class_data():
     """Request class data with params date=(2017-12-31) and batch=batch_a"""
