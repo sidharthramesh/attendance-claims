@@ -20,6 +20,11 @@
         <form id="form" action="/changeclass" method="post" enctype="multipart/form-data">
           <input type="file" name="data_file"/>
       </form>
+        
+        <form id="form" action="/syncclass" method="post" enctype="multipart/form-data">
+          <p>Please verify if valid before syncing</p>
+          <input type="submit" value="Sync with Google Sheets">
+      </form>
       </div>
       <div id="loading" style="display:none">Working on it!. Wait a minute please.</div>
       <div id="buttonTray">
