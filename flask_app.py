@@ -9,6 +9,7 @@ from flask_assets import Environment, Bundle
 from departments import depts
 from io import StringIO
 import pandas as pd
+import requests
 app = Flask(__name__,static_url_path='/static')
 app.config["DEBUG"] = False
 app.config["SQLALCHEMY_DATABASE_URI"] = SQLALCHEMY_DATABASE_URI
