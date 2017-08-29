@@ -16,7 +16,8 @@ Pulmonary Medicine
 Orthopaedics
 Dental
 Dermatology
-Neurology"""
+Neurology
+Psychiatry"""
 
 posting_depts = """Community Medicine
 Medicine
@@ -29,4 +30,5 @@ Pulmonary Medicine
 Orthopaedics
 Dental
 Dermatology
-Neurology"""
+Neurology
+Psychiatry"""
